@@ -48,8 +48,8 @@ class GenericFetchingRepositoryTests: XCTestCase {
             // Assert
             switch result {
             case .success(let items):
-                XCTAssertEqual(items.count, testDataList.count)
-                XCTAssertEqual(items.first?.title, testDataList.first?.title)
+                XCTAssertEqual(items.count, testDataList.count, "Item count should be same")
+                XCTAssertEqual(items.first?.title, testDataList.first?.title, "First item title should match in provided objet and fetched object")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -72,7 +72,7 @@ class GenericFetchingRepositoryTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Received error should be Fetching repository error invalid data")
             }
             expectation.fulfill()
         }
@@ -92,7 +92,7 @@ class GenericFetchingRepositoryTests: XCTestCase {
             // Assert
             switch result {
             case .success(let item):
-                XCTAssertEqual(item.title, testData.title)
+                XCTAssertEqual(item.title, testData.title, "Provided title should match with fetched data title")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -115,7 +115,7 @@ class GenericFetchingRepositoryTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Received error should be Fatching repository error invalid data")
             }
             expectation.fulfill()
         }
@@ -134,7 +134,7 @@ class GenericFetchingRepositoryTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Received error should be Fatching repository error invalid data")
             }
             expectation.fulfill()
         }
@@ -153,7 +153,7 @@ class GenericFetchingRepositoryTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Received error should be Fatching repository error invalid data")
             }
             expectation.fulfill()
         }

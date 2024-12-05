@@ -44,10 +44,10 @@ class DeviceInfoStoreTests: XCTestCase {
             switch result {
             case .success(let deviceItem):
                 // Assert
-                XCTAssertEqual(deviceItem.id, expectedIdentifier)
-                XCTAssertEqual(deviceItem.title, expectedSystemName)
-                XCTAssertEqual(deviceItem.osVersion, expectedSystemVersion)
-                XCTAssertEqual(deviceItem.manufacturer, "Apple")
+                XCTAssertEqual(deviceItem.id, expectedIdentifier, "Provided id shoudl match")
+                XCTAssertEqual(deviceItem.title, expectedSystemName, "Provided system name should match")
+                XCTAssertEqual(deviceItem.osVersion, expectedSystemVersion, "Provided os version should match")
+                XCTAssertEqual(deviceItem.manufacturer, "Apple", "Manufacturers should match")
             case .failure:
                 XCTFail("Expected success, but got failure.")
             }
@@ -71,7 +71,7 @@ class DeviceInfoStoreTests: XCTestCase {
             switch result {
             case .success(let deviceItem):
                 // Assert
-                XCTAssertEqual(deviceItem.id, expectedIdentifier)
+                XCTAssertEqual(deviceItem.id, expectedIdentifier, "Identifier should be undefined")
             case .failure:
                 XCTFail("Expected success, but got failure.")
             }

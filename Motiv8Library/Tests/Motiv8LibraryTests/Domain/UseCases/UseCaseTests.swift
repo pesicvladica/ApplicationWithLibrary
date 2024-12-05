@@ -60,10 +60,10 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success(let items):
-                XCTAssertEqual(items.count, testContacts.count)
+                XCTAssertEqual(items.count, testContacts.count, "Item count should match")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -79,12 +79,12 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Should have received error invalid data")
             }
             expectation.fulfill()
         }
@@ -110,10 +110,10 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success(let items):
-                XCTAssertEqual(items.count, testImages.count)
+                XCTAssertEqual(items.count, testImages.count, "Item count should match")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -129,12 +129,12 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Should have received error invalid data")
             }
             expectation.fulfill()
         }
@@ -153,10 +153,10 @@ class UseCaseTests: XCTestCase {
         
         let expectation = self.expectation(description: #function)
         
-        mockFetcher.execute { result in
+        mockFetcher.collectInfo { result in
             switch result {
             case .success(let item):
-                XCTAssertEqual(item.id, testDevice.id)
+                XCTAssertEqual(item.id, testDevice.id, "Id should match")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -172,12 +172,12 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.collectInfo { result in
             switch result {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Should have received error invalid data")
             }
             expectation.fulfill()
         }
@@ -203,10 +203,10 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success(let items):
-                XCTAssertEqual(items.count, testVideos.count)
+                XCTAssertEqual(items.count, testVideos.count, "Item count should match")
             case .failure:
                 XCTFail("Expected success, but got failure")
             }
@@ -222,12 +222,12 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.execute { result in
+        mockFetcher.getNextPage { result in
             switch result {
             case .success:
                 XCTFail("Expected failure, but got success")
             case .failure(let error):
-                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData)
+                XCTAssertEqual(error as? FetchingRepositoryError, FetchingRepositoryError.invalidData, "Should have received error invalid data")
             }
             expectation.fulfill()
         }

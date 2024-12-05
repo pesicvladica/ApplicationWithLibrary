@@ -75,11 +75,11 @@ class DeviceGalleryStoreTests: XCTestCase {
             switch result {
             case .success(let items):
                 // Assert
-                XCTAssertEqual(items.count, 1)
-                XCTAssertEqual(items.first?.id, expectedMediaItem.id)
-                XCTAssertEqual(items.first?.title, expectedMediaItem.title)
-                XCTAssertEqual(items.first?.byteFileSize, expectedMediaItem.byteFileSize)
-                XCTAssertEqual(items.first?.dimension, expectedMediaItem.dimension)
+                XCTAssertEqual(items.count, 1, "Item count should be 1")
+                XCTAssertEqual(items.first?.id, expectedMediaItem.id, "Fetched id doesn't match to provided id")
+                XCTAssertEqual(items.first?.title, expectedMediaItem.title, "Fetched title doesn't match to provided id")
+                XCTAssertEqual(items.first?.byteFileSize, expectedMediaItem.byteFileSize, "Fetched size doesn't match to provided size")
+                XCTAssertEqual(items.first?.dimension, expectedMediaItem.dimension, "Fetched dimensions does not match to provided dimension")
             case .failure:
                 XCTFail("Expected success, but got failure.")
             }
@@ -108,11 +108,11 @@ class DeviceGalleryStoreTests: XCTestCase {
             switch result {
             case .success(let items):
                 // Assert
-                XCTAssertEqual(items.count, 1)
-                XCTAssertEqual(items.first?.id, expectedMediaItem.id)
-                XCTAssertEqual(items.first?.title, expectedMediaItem.title)
-                XCTAssertEqual(items.first?.byteFileSize, expectedMediaItem.byteFileSize)
-                XCTAssertEqual(items.first?.duration, expectedMediaItem.duration)
+                XCTAssertEqual(items.count, 1, "Item count should be 1")
+                XCTAssertEqual(items.first?.id, expectedMediaItem.id, "Fetched id doesn't match to provided id")
+                XCTAssertEqual(items.first?.title, expectedMediaItem.title, "Fetched title doesn't match to provided id")
+                XCTAssertEqual(items.first?.byteFileSize, expectedMediaItem.byteFileSize, "Fetched size doesn't match to provided size")
+                XCTAssertEqual(items.first?.duration, expectedMediaItem.duration, "Fetched duration does not match to provided duration")
             case .failure:
                 XCTFail("Expected success, but got failure.")
             }
@@ -137,7 +137,7 @@ class DeviceGalleryStoreTests: XCTestCase {
                 XCTFail("Expected failure, but got success.")
             case .failure(let error):
                 // Assert
-                XCTAssertEqual(error as? StoreError, StoreError.fetchFailed("Permission denied."))
+                XCTAssertEqual(error as? StoreError, StoreError.fetchFailed("Permission denied."), "Should have returned Permission denied error")
             }
             expectation.fulfill()
         }
@@ -159,7 +159,7 @@ class DeviceGalleryStoreTests: XCTestCase {
             switch result {
             case .success(let items):
                 // Assert
-                XCTAssertTrue(items.isEmpty)
+                XCTAssertTrue(items.isEmpty, "Items list returned should be empty")
             case .failure:
                 XCTFail("Expected success, but got failure.")
             }

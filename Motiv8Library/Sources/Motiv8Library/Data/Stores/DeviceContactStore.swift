@@ -46,21 +46,26 @@ class DeviceContactStore: Store<ContactItem> {
             
             switch result {
             case .success():
+
                 do {
-                    let keysToFetch = [CNContactGivenNameKey, 
+                    let keysToFetch = [CNContactGivenNameKey,
                                        CNContactFamilyNameKey,
                                        CNContactPhoneNumbersKey,
                                        CNContactEmailAddressesKey] as [CNKeyDescriptor]
                     let request = CNContactFetchRequest(keysToFetch: keysToFetch)
                     
                     var contacts: [ContactItem] = []
+                    var contactsCount = 0
                     try self.contactStore.enumerateContacts(with: request) { contact, stop in
                         
                         // Pagination logic to stop once the offset and limit are met.
                         if contacts.count >= limit {
                             stop.pointee = true
-                        } 
-                        else if contacts.count >= offset {
+                        }
+                        else if contactsCount < offset {
+                            contactsCount += 1
+                        }
+                        else if contacts.count + contactsCount >= offset {
                             
                             // Creating the ContactItem based on contact details.
                             let identifier = contact.identifier
@@ -75,9 +80,10 @@ class DeviceContactStore: Store<ContactItem> {
                             contacts.append(contactItem)
                         }
                     }
-
+                    
                     onCompletion(.success(contacts))
-                } catch {
+                }
+                catch {
                     onCompletion(.failure(StoreError.fetchFailed("Failed to fetch contacts.")))
                 }
             case .failure(let error):

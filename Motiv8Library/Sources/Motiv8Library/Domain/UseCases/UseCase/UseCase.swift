@@ -8,7 +8,7 @@
 import Foundation
 
 /// Base class for use cases interacting with repositories.
-class UseCase {
+open class UseCase {
     
     // MARK: Properties
     
@@ -25,5 +25,23 @@ class UseCase {
     /// - Parameter repository: The repository responsible for fetching data.
     init(repository: GenericFetchingRepository) {
         self.repository = repository
+    }
+}
+
+// MARK: - Custom Error Type
+
+/// Errors that can occur during data fetching in use case.
+enum UseCaseError: Error, CustomStringConvertible, Equatable {
+    case fetchFailed
+    case custom(message: String)
+
+    /// Description of the error.
+    var description: String {
+        switch self {
+        case .fetchFailed:
+            return "Could not fetch data!"
+        case .custom(let message):
+            return message
+        }
     }
 }

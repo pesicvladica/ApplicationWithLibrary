@@ -17,8 +17,13 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .blue
         
         let lib = Motiv8Library.instance
-        lib.fetchImages { items in
-            debugPrint(items)
+        lib.fetchNextImagesPage { result in
+            switch result {
+            case .success(let items):
+                debugPrint(items.count)
+            case .failure(let failure):
+                debugPrint(failure)
+            }
         }
     }
 
