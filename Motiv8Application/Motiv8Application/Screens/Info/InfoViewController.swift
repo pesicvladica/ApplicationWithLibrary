@@ -66,9 +66,14 @@ class InfoViewController: UIViewController {
                         self.controllerView.setDescription(info)
                     }
                 case .failure(let error):
-                    debugPrint(error.localizedDescription)
+                    self.showError(error: error)
                 }
             }
         }
+    }
+    
+    // Show error message (for now, just logs it)
+    private func showError(error: Error) {
+        debugPrint(error.localizedDescription)
     }
 }

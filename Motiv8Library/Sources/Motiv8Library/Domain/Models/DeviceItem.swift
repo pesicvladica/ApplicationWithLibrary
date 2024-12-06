@@ -15,4 +15,20 @@ public struct DeviceItem: Item {
     public var osVersion: String
     public var manufacturer: String
     public var screenResolution: CGSize
+    
+    init(id: String, title: String, osVersion: String, manufacturer: String, screenResolution: CGSize) {
+        self.id = id
+        self.title = title
+        self.osVersion = osVersion
+        self.manufacturer = manufacturer
+        self.screenResolution = screenResolution
+    }
+    
+    public init() {
+        self.id = ""
+        self.title = ""
+        self.osVersion = ""
+        self.manufacturer = ""
+        self.screenResolution = .zero
+    }
 }

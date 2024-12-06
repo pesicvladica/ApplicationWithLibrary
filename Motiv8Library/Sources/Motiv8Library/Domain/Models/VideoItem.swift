@@ -16,4 +16,20 @@ public struct VideoItem: MediaItem {
     public var byteFileSize: Int64
     
     public var duration: Double
+    
+    init(id: String, title: String, dateCreated: Date, byteFileSize: Int64, duration: Double) {
+        self.id = id
+        self.title = title
+        self.dateCreated = dateCreated
+        self.byteFileSize = byteFileSize
+        self.duration = duration
+    }
+    
+    public init() {
+        self.id = ""
+        self.title = ""
+        self.dateCreated = Date.distantPast
+        self.byteFileSize = 0
+        self.duration = 0
+    }
 }

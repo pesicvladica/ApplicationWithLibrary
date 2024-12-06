@@ -14,4 +14,18 @@ public struct ContactItem: Item {
 
     public var phoneNumbers: [String]
     public var emails: [String]
+    
+    init(id: String, title: String, phoneNumbers: [String], emails: [String]) {
+        self.id = id
+        self.title = title
+        self.phoneNumbers = phoneNumbers
+        self.emails = emails
+    }
+    
+    public init() {
+        self.id = ""
+        self.title = ""
+        self.phoneNumbers = []
+        self.emails = []
+    }
 }
