@@ -14,6 +14,7 @@ enum Option: String, CaseIterable {
     case images = "Images"      // Option to view images
     case videos = "Videos"      // Option to view videos
     case info = "Device Info"   // Option to view device information
+    case analytics = "Analitics"// Option to view analitics
 }
 
 class MainViewController: UIViewController {
@@ -79,6 +80,11 @@ class MainViewController: UIViewController {
         case .info:
             let viewModel = InfoViewModel(fetcher: motiv8Lib.infoFetcher)
             let vc = InfoViewController(viewModel)
+            vc.title = title
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .analytics:
+            let viewModel = AnaliticsViewModel(motivateLibrary: motiv8Lib)
+            let vc = AnaliticsViewController(viewModel)
             vc.title = title
             self.navigationController?.pushViewController(vc, animated: true)
         case nil:
