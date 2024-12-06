@@ -1,33 +1,90 @@
 import Foundation
 
-open class Motiv8Library {
+/// A centralized library providing access to various fetchers for device data, such as device information, contacts, images, and videos.
+///
+/// `Motiv8Library` serves as an entry point for interacting with the data-fetching capabilities of the application.
+/// It utilizes a repository to manage and retrieve data from different stores.
+/// - Note: By default, it uses a real data repository for fetching information.
+///
+/// # Fetchers:
+/// - `infoFetcher`: Retrieves device-specific information.
+/// - `contactFetcher`: Accesses the user's contacts.
+/// - `imageFetcher`: Handles fetching metadata for device images.
+/// - `videoFetcher`: Handles fetching metadata for device videos.
+///
+/// # Example Usage:
+/// ```swift
+/// let library = Motiv8Library()
+/// library.contactFetcher.fetchNextPage { result in
+///     switch result {
+///     case .success(let contacts):
+///         print("Fetched contacts: \(contacts)")
+///     case .failure(let error):
+///         print("Error fetching contacts: \(error)")
+///     }
+/// }
+/// ```
+public class Motiv8Library {
     
     // MARK: Private properties
     
     /// Repository used for fetching and managing data from various stores.
-    private let repository: GenericFetchingRepository
+    private let repository: FetchingRepository
+    
+    /// A default repository instance that provides real data sources for different item types.
+    /// - Includes:
+    ///   - `DeviceItem`: Fetched from `DeviceInfoStore`.
+    ///   - `ContactItem`: Fetched from `DeviceContactStore`.
+    ///   - `ImageItem`: Fetched from `DeviceGalleryStore` for `.image` type.
+    ///   - `VideoItem`: Fetched from `DeviceGalleryStore` for `.video` type.
+    private static let defaultRepository = GenericFetchingRepository(stores: [
+        String(describing: DeviceItem.self) : DeviceInfoStore(),
+        String(describing: ContactItem.self) : DeviceContactStore(),
+        String(describing: ImageItem.self) : DeviceGalleryStore<ImageItem>(mediaType: .image),
+        String(describing: VideoItem.self) : DeviceGalleryStore<VideoItem>(mediaType: .video)
+    ])
     
     // MARK: Public properties
     
-    /// Lazy-initialized fetcher for device information.
+    /// Fetcher for retrieving device-specific information.
+    /// - SeeAlso: `InfoFetcher`.
+    /// - Usage:
+    /// ```swift
+    /// library.infoFetcher.collect { result in ... }
+    /// ```
     public lazy var infoFetcher: InfoFetcher = {
         let fetcher = InfoFetcher(repository: repository)
         return fetcher
     }()
     
-    /// Lazy-initialized fetcher for device contacts.
+    /// Fetcher for retrieving device contacts.
+    /// - SeeAlso: `ContactFetcher`.
+    /// - Usage:
+    /// ```swift
+    /// library.contactFetcher.getNextPage { result in ... }
+    /// ```
     public lazy var contactFetcher: ContactFetcher = {
         let fetcher = ContactFetcher(repository: repository)
         return fetcher
     }()
     
-    /// Lazy-initialized fetcher for device images.
+    /// Fetcher for retrieving metadata about device images.
+    /// - SeeAlso: `ImageFetcher`.
+    /// - Usage:
+    /// ```swift
+    /// library.imageFetcher.prefetchAllItems { result in ... }
+    /// ```
     public lazy var imageFetcher: ImageFetcher = {
         let fetcher = ImageFetcher(repository: repository)
         return fetcher
     }()
     
-    /// Lazy-initialized fetcher for device videos.
+    /// Fetcher for retrieving metadata about device videos.
+    /// - SeeAlso: `VideoFetcher`.
+    /// - Usage:
+    /// ```swift
+    /// library.videoFetcher.getNextPage { result in ... }
+    /// ```
     public lazy var videoFetcher: VideoFetcher = {
         let fetcher = VideoFetcher(repository: repository)
         return fetcher
@@ -35,77 +92,19 @@ open class Motiv8Library {
     
     // MARK: Initialization
     
-    /// Shared singleton instance of `Motiv8Library`.
-    public static let instance: Motiv8Library = Motiv8Library()
-    
-    /// Private initializer to enforce singleton pattern.
-    private init() {
-        repository = GenericFetchingRepository(stores: [
-            String(describing: DeviceItem.self) : DeviceInfoStore(),
-            String(describing: ContactItem.self) : DeviceContactStore(),
-            String(describing: ImageItem.self) : DeviceGalleryStore<ImageItem>(mediaType: .image),
-            String(describing: VideoItem.self) : DeviceGalleryStore<VideoItem>(mediaType: .video)
-        ])
-    }
-    
-    // MARK: Public methods
-    
-    /// Fetches device information using the `InfoFetcher`.
-    ///
-    /// - Parameter onCompletion: A completion handler that provides the result of the fetch operation.
-    ///   - If successful, the result contains a `DeviceItem`.
-    ///   - If unsuccessful, the result contains an `Error`.
-    public func fetchDeviceInfo(_ onCompletion: @escaping (Result<DeviceItem, Error>) -> Void) {
-        infoFetcher.collectInfo(onCompletion)
-    }
-    
-    /// Fetches the next page of contacts using the `ContactFetcher`.
-    ///
-    /// - Parameter onCompletion: A completion handler that provides the result of the fetch operation.
-    ///   - If successful, the result contains an array of `ContactItem` objects.
-    ///   - If unsuccessful, the result contains an `Error`.
-    public func fetchNextContactsPage(_ onCompletion: @escaping (Result<[ContactItem], Error>) -> Void) {
-        contactFetcher.getNextPage(onCompletion)
-    }
-    
-    /// Resets the internal state of the `ContactFetcher`, including the pagination offset and cached contacts.
-    ///
-    /// Use this method to restart fetching contacts from the beginning.
-    public func resetContactsState() {
-        contactFetcher.reset()
-    }
-    
-    /// Fetches the next page of images using the `ImageFetcher`.
-    ///
-    /// - Parameter onCompletion: A completion handler that provides the result of the fetch operation.
-    ///   - If successful, the result contains an array of `ImageItem` objects.
-    ///   - If unsuccessful, the result contains an `Error`.
-    public func fetchNextImagesPage(_ onCompletion: @escaping (Result<[ImageItem], Error>) -> Void) {
-        imageFetcher.getNextPage(onCompletion)
-    }
-    
-    /// Resets the internal state of the `ImageFetcher`, including the pagination offset and cached images.
-    ///
-    /// Use this method to restart fetching images from the beginning.
-    public func resetImagesState() {
-        imageFetcher.reset()
-    }
-    
-    /// Fetches the next page of videos using the `VideoFetcher`.
-    ///
-    /// - Parameter onCompletion: A completion handler that provides the result of the fetch operation.
-    ///   - If successful, the result contains an array of `VideoItem` objects.
-    ///   - If unsuccessful, the result contains an `Error`.
-    public func fetchNextVideosPage(_ onCompletion: @escaping (Result<[VideoItem], Error>) -> Void) {
-        videoFetcher.getNextPage(onCompletion)
-    }
-    
-    /// Resets the internal state of the `VideoFetcher`, including the pagination offset and cached videos.
-    ///
-    /// Use this method to restart fetching videos from the beginning.
-    public func resetVideosState() {
-        videoFetcher.reset()
+    /// Initializes the `Motiv8Library` with a custom or default repository.
+    /// - Parameter repository: The repository instance to be used. If not provided, the default real data repository is used.
+    /// - Example:
+    /// ```swift
+    /// let customRepo = MockFetchingRepository(...)
+    /// let library = Motiv8Library(repository: customRepo)
+    /// ```
+    public init(repository: FetchingRepository? = nil) {
+        if let repo = repository {
+            self.repository = repo
+        }
+        else {
+            self.repository = Motiv8Library.defaultRepository
+        }
     }
 }
-
-

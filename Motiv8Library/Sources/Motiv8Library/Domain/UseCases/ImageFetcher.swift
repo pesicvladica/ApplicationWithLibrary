@@ -11,7 +11,7 @@ import Foundation
 /// This class simplifies the interaction with a repository that supports fetching image data.
 ///
 /// `ImageFetcher` maintains pagination state and provides methods for fetching individual pages or prefetching all images.
-open class ImageFetcher: UseCase {
+public final class ImageFetcher: UseCase, ImagesListFetcherProtocol {
 
     // MARK: Properties
     
@@ -30,7 +30,7 @@ open class ImageFetcher: UseCase {
     /// - Parameters:
     ///   - repository: A generic repository instance that provides access to image data.
     ///   - pageLimit: The maximum number of images to fetch per page. Defaults to 100.
-    init(repository: GenericFetchingRepository, pageLimit: Int = 100) {
+    init(repository: FetchingRepository, pageLimit: Int = 100) {
         self.pageLimit = pageLimit
         self.defaultPageLimit = pageLimit
         super.init(repository: repository)
@@ -44,7 +44,7 @@ open class ImageFetcher: UseCase {
     ///
     /// - Parameter onPrefetched: A closure that gets called when prefetching is complete.
     ///   - Result<[ImageItem], Error>: Contains the list of all fetched images on success, or an error if the operation fails.
-    public func prefetchAllImages(_ onPrefetched: @escaping (Result<[ImageItem], Error>) -> Void) {
+    public func prefetchAllItems(_ onPrefetched: @escaping (Result<[ImageItem], Error>) -> Void) {
         pageLimit = 1000
         getNextPage { result in
             switch result {
@@ -52,7 +52,7 @@ open class ImageFetcher: UseCase {
                 self.fullImageList += success
                 
                 if success.count == self.pageLimit {
-                    self.prefetchAllImages(onPrefetched)
+                    self.prefetchAllItems(onPrefetched)
                 }
                 else {
                     self.pageLimit = self.defaultPageLimit

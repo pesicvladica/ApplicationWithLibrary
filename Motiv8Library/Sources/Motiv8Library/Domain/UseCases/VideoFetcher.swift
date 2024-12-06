@@ -11,7 +11,7 @@ import Foundation
 /// This class simplifies interactions with a repository that supports fetching video data.
 ///
 /// `VideoFetcher` maintains pagination state and provides methods for fetching individual pages or prefetching all videos.
-open class VideoFetcher: UseCase {
+public final class VideoFetcher: UseCase, VideosListFetcherProtocol {
 
     // MARK: Properties
     
@@ -30,7 +30,7 @@ open class VideoFetcher: UseCase {
     /// - Parameters:
     ///   - repository: A generic repository instance that provides access to video data.
     ///   - pageLimit: The maximum number of videos to fetch per page. Defaults to 100.
-    init(repository: GenericFetchingRepository, pageLimit: Int = 100) {
+    init(repository: FetchingRepository, pageLimit: Int = 100) {
         self.pageLimit = pageLimit
         self.defaultPageLimit = pageLimit
         super.init(repository: repository)
@@ -44,7 +44,7 @@ open class VideoFetcher: UseCase {
     ///
     /// - Parameter onPrefetched: A closure that gets called when prefetching is complete.
     ///   - Result<[VideoItem], Error>: Contains the list of all fetched videos on success, or an error if the operation fails.
-    public func prefetchAllVideos(_ onPrefetched: @escaping (Result<[VideoItem], Error>) -> Void) {
+    public func prefetchAllItems(_ onPrefetched: @escaping (Result<[VideoItem], Error>) -> Void) {
         pageLimit = 1000
         getNextPage { result in
             switch result {
@@ -52,7 +52,7 @@ open class VideoFetcher: UseCase {
                 self.fullVideoList += success
                 
                 if success.count == self.pageLimit {
-                    self.prefetchAllVideos(onPrefetched)
+                    self.prefetchAllItems(onPrefetched)
                 }
                 else {
                     self.pageLimit = self.defaultPageLimit

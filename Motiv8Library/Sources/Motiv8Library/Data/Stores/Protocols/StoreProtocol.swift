@@ -10,7 +10,7 @@ import Foundation
 // MARK: Protocol definition
 
 /// Protocol for data stores. The associated type `T` allows each store to fetch a specific type of item (e.g., contacts, images).
-protocol StoreProtocol {
+public protocol StoreProtocol {
     associatedtype T
     
     /// Fetches a single item and returns the result through the completion handler.
@@ -28,11 +28,11 @@ protocol StoreProtocol {
 // MARK: Default implementation
 
 /// A base class implementing the `StoreProtocol`. It provides default behaviors for `fetchItem` and `fetchList` methods, which are meant to be overridden by subclasses.
-class Store<T>: StoreProtocol {
+public class Store<T>: StoreProtocol {
     
     /// Default implementation of `fetchItem` that returns a method not implemented error.
     /// - Parameter onCompletion: A closure that returns a failure result indicating that the method is not implemented.
-    func fetchItem(_ onCompletion: @escaping (Result<T, Error>) -> Void) {
+    public func fetchItem(_ onCompletion: @escaping (Result<T, Error>) -> Void) {
         onCompletion(.failure(StoreError.methodNotImplemented))
     }
     
@@ -41,7 +41,7 @@ class Store<T>: StoreProtocol {
     ///   - offset: The starting index for fetching items.
     ///   - limit: The maximum number of items to fetch.
     ///   - onCompletion: A closure that returns a failure result indicating that the method is not implemented.
-    func fetchList(offset: Int = 0, limit: Int = 0, _ onCompletion: @escaping (Result<[T], Error>) -> Void) {
+    public func fetchList(offset: Int = 0, limit: Int = 0, _ onCompletion: @escaping (Result<[T], Error>) -> Void) {
         onCompletion(.failure(StoreError.methodNotImplemented))
     }
 }
@@ -49,13 +49,13 @@ class Store<T>: StoreProtocol {
 // MARK: - Custom Error Type
 
 /// Represents errors that can occur within the data stores.
-enum StoreError: Error, LocalizedError, Equatable {
+public enum StoreError: Error, LocalizedError, Equatable {
     case methodNotImplemented
     case accessDenied(String)
     case fetchFailed(String)
 
     /// Custom error descriptions for each error case.
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .methodNotImplemented:
             return "Method not implemented!" // Default message when a method isn't implemented.

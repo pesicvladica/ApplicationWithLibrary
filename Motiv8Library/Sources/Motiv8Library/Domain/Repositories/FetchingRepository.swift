@@ -10,7 +10,7 @@ import Foundation
 // MARK: Protocol definition
 
 /// A protocol defining methods for fetching data from a repository.
-protocol FetchingRepository {
+public protocol FetchingRepository {
     
     /// Fetches a list of data items of a specified type.
     ///
@@ -44,12 +44,12 @@ protocol FetchingRepository {
 // MARK: - Custom Error Type
 
 /// Errors that can occur during data fetching in the repository.
-enum FetchingRepositoryError: Error, CustomStringConvertible, Equatable {
+public enum FetchingRepositoryError: Error, CustomStringConvertible, Equatable {
     case invalidData
     case custom(message: String)
 
     /// Description of the error.
-    var description: String {
+    public var description: String {
         switch self {
         case .invalidData:
             return "The data fetched is invalid or incompatible."

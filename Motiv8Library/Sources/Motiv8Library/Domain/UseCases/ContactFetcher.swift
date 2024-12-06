@@ -12,12 +12,12 @@ import Foundation
 ///
 /// `ContactFetcher` leverages a generic repository to handle data fetching operations while maintaining pagination state.
 /// It provides an interface for fetching individual pages of contacts or prefetching all contacts in one operation.
-open class ContactFetcher: UseCase {
-
+public final class ContactFetcher: UseCase, ContactsListFetcherProtocol {
+    
     // MARK: Properties
     
     /// A list containing all contacts fetched so far during prefetching.
-    private var fullContactsList: [ContactItem] = []
+    private var fullContactsList = [ContactItem]()
     /// The current offset for paginated fetching, tracking where the next page of data begins.
     private var currentOffset: Int = 0
     /// The maximum number of contacts to fetch in a single operation. Defaults to 100.
@@ -30,7 +30,7 @@ open class ContactFetcher: UseCase {
     /// - Parameters:
     ///   - repository: A generic repository instance that provides access to contact data.
     ///   - pageLimit: The maximum number of contacts to fetch per page. Defaults to 100.
-    init(repository: GenericFetchingRepository, pageLimit: Int = 100) {
+    init(repository: FetchingRepository, pageLimit: Int = 100) {
         self.pageLimit = pageLimit
         super.init(repository: repository)
     }
@@ -43,14 +43,14 @@ open class ContactFetcher: UseCase {
     ///
     /// - Parameter onPrefetched: A closure that gets called when prefetching is complete.
     ///   - Result<[ContactItem], Error>: Contains the list of all fetched contacts on success, or an error if the operation fails.
-    public func prefetchAllContacts(_ onPrefetched: @escaping (Result<[ContactItem], Error>) -> Void) {
-        getNextPage { result in
+    public func prefetchAllItems(_ onPrefetched: @escaping (Result<[ContactItem], Error>) -> Void) {
+        self.getNextPage { result in
             switch result {
             case .success(let success):
                 self.fullContactsList += success
                 
                 if success.count == self.pageLimit {
-                    self.prefetchAllContacts(onPrefetched)
+                    self.prefetchAllItems(onPrefetched)
                 }
                 else {
                     onPrefetched(.success(self.fullContactsList))
