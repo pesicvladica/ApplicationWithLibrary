@@ -81,7 +81,9 @@ class ListView: UIView {
     
     // Reload the table view data and stop the refresh control animation
     func reloadData() {
-        refreshControl.endRefreshing()
+        if refreshControl.isRefreshing {
+            refreshControl.endRefreshing()
+        }
         tableView.reloadData()
     }
 }

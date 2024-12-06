@@ -39,7 +39,9 @@ class ContactsViewModel: ListViewModelProtocol {
             switch result {
             case .success(let fetchedContacts):
                 self?.listItems.append(contentsOf: fetchedContacts)
-                self?.onDataFetched?(nil)
+                if fetchedContacts.count != 0 {
+                    self?.onDataFetched?(nil)
+                }
             case .failure(let error):
                 self?.onDataFetched?(error)
             }

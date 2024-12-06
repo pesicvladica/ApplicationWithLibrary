@@ -37,9 +37,11 @@ class ImagesViewModel: ListViewModelProtocol {
     func fetchNextPage() {
         fetcher.getNextPage { [weak self] result in
             switch result {
-            case .success(let fetchedContacts):
-                self?.listItems.append(contentsOf: fetchedContacts)
-                self?.onDataFetched?(nil)
+            case .success(let fetchedImages):
+                self?.listItems.append(contentsOf: fetchedImages)
+                if fetchedImages.count != 0 {
+                    self?.onDataFetched?(nil)
+                }
             case .failure(let error):
                 self?.onDataFetched?(error)
             }
