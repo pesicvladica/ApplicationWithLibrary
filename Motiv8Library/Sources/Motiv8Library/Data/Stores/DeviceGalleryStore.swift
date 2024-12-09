@@ -14,7 +14,7 @@ class DeviceGalleryStore<T>: Store<T> where T: MediaItem {
     // MARK: Properties
     
     private let mediaType: PHAssetMediaType
-    private let permissionManager: PermissionProtocol
+    private let permissionManager: Permission
     private let phAsset: PHAsset.Type
     private let phAssetResource: PHAssetResource.Type
     
@@ -27,7 +27,7 @@ class DeviceGalleryStore<T>: Store<T> where T: MediaItem {
     ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests (defaults to `PhotosPermissionManager`).
     ///    - phAsset: The class used to fetch and manage photo assets (defaults to `PHAsset.self`).
     init(mediaType: PHAssetMediaType,
-         permissionManager: PermissionProtocol = PhotosPermissionManager(),
+         permissionManager: Permission = PhotosPermissionManager(),
          phAsset: PHAsset.Type = PHAsset.self,
          phAssetResource: PHAssetResource.Type = PHAssetResource.self) {
         self.mediaType = mediaType

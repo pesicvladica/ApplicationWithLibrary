@@ -9,7 +9,7 @@ import Foundation
 @testable import Motiv8Library
 
 // Mock for PermissionProtocol
-class MockPermissionManager: PermissionProtocol {
+class MockPermissionManager: Permission {
     var permissionGranted: Bool
     
     init(permissionGranted: Bool) {

@@ -73,12 +73,14 @@ public final class VideoFetcher: UseCase, VideosListFetcherProtocol {
     /// - Parameter onCompletion: A closure that gets called when the operation completes.
     ///   - Result<[VideoItem], Error>: Contains the fetched list of videos on success, or an error if the operation fails.
     public func getNextPage(_ onCompletion: @escaping (Result<[VideoItem], Error>) -> Void) {
-        DispatchQueue.global().async { [weak self] in
+        Task.detached { [weak self] in
             guard let self else { return }
             
             self.repository.fetchListData(ofType: VideoItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                DispatchQueue.main.async {
-                    onCompletion(result)
+                Task {
+                    await MainActor.run {
+                        onCompletion(result)
+                    }
                 }
             }
             self.currentOffset += self.pageLimit

@@ -58,14 +58,16 @@ class ListViewController: UIViewController {
     // Set up bindings between the view model and the view
     private func setupBindings() {
         viewModel.onDataFetched = { [weak self] error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    // If an error occurs, display it
-                    self?.showError(error: error)
-                }
-                else {
-                    // If data is successfully fetched, reload the table view
-                    self?.controllerView.reloadData()
+            Task {
+                await MainActor.run {
+                    if let error = error {
+                        // If an error occurs, display it
+                        self?.showError(error: error)
+                    }
+                    else {
+                        // If data is successfully fetched, reload the table view
+                        self?.controllerView.reloadData()
+                    }
                 }
             }
         }

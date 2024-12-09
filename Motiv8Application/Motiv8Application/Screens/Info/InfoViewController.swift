@@ -56,17 +56,19 @@ class InfoViewController: UIViewController {
     private func setupBindings() {
         // The ViewModel will call this closure when the item has been fetched
         viewModel.onItemFetched = { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                
-                // Handle the fetched result
-                switch result {
-                case .success(let deviceInfo):
-                    if let info = deviceInfo as? DeviceItem {
-                        self.controllerView.setDescription(info)
+            Task {
+                await MainActor.run {
+                    guard let self = self else { return }
+                    
+                    // Handle the fetched result
+                    switch result {
+                    case .success(let deviceInfo):
+                        if let info = deviceInfo as? DeviceItem {
+                            self.controllerView.setDescription(info)
+                        }
+                    case .failure(let error):
+                        self.showError(error: error)
                     }
-                case .failure(let error):
-                    self.showError(error: error)
                 }
             }
         }

@@ -73,12 +73,14 @@ public final class ImageFetcher: UseCase, ImagesListFetcherProtocol {
     /// - Parameter onCompletion: A closure that gets called when the operation completes.
     ///   - Result<[ImageItem], Error>: Contains the fetched list of images on success, or an error if the operation fails.
     public func getNextPage(_ onCompletion: @escaping (Result<[ImageItem], Error>) -> Void) {
-        DispatchQueue.global().async { [weak self] in
+        Task.detached { [weak self] in
             guard let self else { return }
             
             self.repository.fetchListData(ofType: ImageItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                DispatchQueue.main.async {
-                    onCompletion(result)
+                Task {
+                    await MainActor.run {
+                        onCompletion(result)
+                    }
                 }
             }
             self.currentOffset += self.pageLimit

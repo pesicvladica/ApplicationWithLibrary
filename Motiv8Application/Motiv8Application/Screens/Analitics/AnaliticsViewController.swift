@@ -65,14 +65,16 @@ class AnaliticsViewController: UIViewController {
     // Setup the bindings between the ViewModel and the view
     private func setupBindings() {
         viewModel.onResultsFetched = { [weak self] data, error in
-            DispatchQueue.main.async {
-                self?.controllerView.hideSpinner()
-                
-                if let result = data {
-                    self?.controllerView.setInfo(result)
-                }
-                else {
-                    self?.showError(error: error)
+            Task {
+                await MainActor.run {
+                    self?.controllerView.hideSpinner()
+                    
+                    if let result = data {
+                        self?.controllerView.setInfo(result)
+                    }
+                    else {
+                        self?.showError(error: error)
+                    }
                 }
             }
         }

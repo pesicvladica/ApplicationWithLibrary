@@ -70,11 +70,13 @@ public final class ContactFetcher: UseCase, ContactsListFetcherProtocol {
     /// - Parameter onCompletion: A closure that gets called when the operation completes.
     ///   - Result<[ContactItem], Error>: Contains the fetched list of contacts on success, or an error if the operation fails.
     public func getNextPage(_ onCompletion: @escaping (Result<[ContactItem], Error>) -> Void) {
-        DispatchQueue.global().async { [weak self] in
+        Task.detached { [weak self] in
             guard let self else { return }
             self.repository.fetchListData(ofType: ContactItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                DispatchQueue.main.async {
-                    onCompletion(result)
+                Task {
+                    await MainActor.run {
+                        onCompletion(result)
+                    }
                 }
             }
             self.currentOffset += self.pageLimit
