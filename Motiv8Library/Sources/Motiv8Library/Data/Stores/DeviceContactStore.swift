@@ -31,17 +31,7 @@ class DeviceContactStore: Store {
         self.contactStore = contactStore
     }
     
-    // MARK: Store<> methods
-    
-    func fetchItem() async throws -> ContactItem {
-        throw StoreError.methodNotImplemented
-    }
-    
-    func stream() -> AsyncThrowingStream<ContactItem, Error> {
-        AsyncThrowingStream {
-            throw StoreError.methodNotImplemented
-        }
-    }
+    // MARK: Store methods
     
     /// Fetches a list of contacts, respecting the given offset and limit. Requests permission before fetching.
     /// - Parameters:
@@ -66,12 +56,14 @@ class DeviceContactStore: Store {
             var contactsCount = 0
             try self.contactStore.enumerateContacts(with: request) { contact, stop in
                 
+                // Increase counter until element on offset index is reached
+                while contactsCount < offset {
+                    contactsCount += 1
+                }
+                
                 // Pagination logic to stop once the offset and limit are met.
                 if contacts.count >= limit {
                     stop.pointee = true
-                }
-                else if contactsCount < offset {
-                    contactsCount += 1
                 }
                 else if contacts.count + contactsCount >= offset {
                     
@@ -93,6 +85,18 @@ class DeviceContactStore: Store {
         }
         catch {
             throw StoreError.fetchFailed("Failed to fetch contacts.")
+        }
+    }
+    
+    // MARK: Unsupported methods
+    
+    func fetchItem() async throws -> ContactItem {
+        throw StoreError.methodNotImplemented
+    }
+    
+    func stream() -> AsyncThrowingStream<ContactItem, Error> {
+        AsyncThrowingStream {
+            throw StoreError.methodNotImplemented
         }
     }
 }

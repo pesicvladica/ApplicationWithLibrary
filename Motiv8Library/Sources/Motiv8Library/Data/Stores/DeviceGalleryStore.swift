@@ -9,7 +9,8 @@ import Foundation
 import Photos
 
 /// A store for fetching media items (either images or videos) from the device's photo library.
-class DeviceGalleryStore<T>: Store<T> where T: MediaItem {
+class DeviceGalleryStore<GalleryItem>: Store {
+    typealias Item = GalleryItem
     
     // MARK: Properties
     
@@ -73,58 +74,65 @@ class DeviceGalleryStore<T>: Store<T> where T: MediaItem {
         }
     }
     
-    // MARK: Store<> methods
+    // MARK: Store methods
     
     /// Fetches a list of photo library items, respecting the given offset and limit. Requests permission before fetching.
     /// - Parameters:
     ///   - offset: The starting index for fetching items.
     ///   - limit: The maximum number of items to fetch.
-    ///   - onCompletion: A closure that returns a success or failure result with the list of items.
-    override func fetchList(offset: Int = 0, limit: Int = 0, _ onCompletion: @escaping (Result<[T], Error>) -> Void) {
-        self.permissionManager.requestPermission { [weak self] result in
-            guard let self else {
-                onCompletion(.failure(StoreError.fetchFailed("Unexpected error.")))
-                return
-            }
+    /// - Returns: List of items fetched from gallery.
+    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [GalleryItem] {
+        do {
+            try await self.permissionManager.requestPermission()
+        }
+        catch (let error) {
+            throw error
+        }
+        
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+
+        var mediaItems: [GalleryItem] = []
+        let results = self.phAsset.fetchAssets(with: self.mediaType, options: fetchOptions)
+        results.enumerateObjects { asset, index, stop in
             
-            switch result {
-            case .success():
-                let fetchOptions = PHFetchOptions()
-                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-
-                var mediaItems: [T] = []
-                let results = self.phAsset.fetchAssets(with: self.mediaType, options: fetchOptions)
-                results.enumerateObjects { asset, index, stop in
-                    
-                    // Stop enumerating if the number of processed items exceeds the requested limit and offset.
-                    if index >= limit + offset {
-                        stop.pointee = true
-                    }
-                    else if index >= offset {
-                        
-                        let identifier = asset.localIdentifier
-                        let description = asset.description
-                        let dateCreated = asset.creationDate ?? Date.distantPast
-                        let fileSize = self.phAssetResource.assetResources(for: asset).first?.value(forKey: "fileSize") as? Int64 ?? 0
-                        let dimension = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
-                        let duration = asset.duration
-                        
-                        // Create media item based on the media type (image or video)
-                        if let mediaItem = self.createMediaItem(identifier: identifier,
-                                                                description: description,
-                                                                dateCreated: dateCreated,
-                                                                fileSize: fileSize,
-                                                                dimension: dimension,
-                                                                duration: duration) as? T {
-                            mediaItems.append(mediaItem)
-                        }
-                    }
-                }
-
-                onCompletion(.success(mediaItems))
-            case .failure(let error):
-                onCompletion(.failure(error))
+            // Stop enumerating if the number of processed items exceeds the requested limit and offset.
+            if index >= limit + offset {
+                stop.pointee = true
             }
+            else if index >= offset {
+                
+                let identifier = asset.localIdentifier
+                let description = asset.description
+                let dateCreated = asset.creationDate ?? Date.distantPast
+                let fileSize = self.phAssetResource.assetResources(for: asset).first?.value(forKey: "fileSize") as? Int64 ?? 0
+                let dimension = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+                let duration = asset.duration
+                
+                // Create media item based on the media type (image or video)
+                if let mediaItem = self.createMediaItem(identifier: identifier,
+                                                        description: description,
+                                                        dateCreated: dateCreated,
+                                                        fileSize: fileSize,
+                                                        dimension: dimension,
+                                                        duration: duration) as? GalleryItem {
+                    mediaItems.append(mediaItem)
+                }
+            }
+        }
+
+        return mediaItems
+    }
+    
+    // MARK: Unsupported methods
+    
+    func fetchItem() async throws -> GalleryItem {
+        throw StoreError.methodNotImplemented
+    }
+    
+    func stream() -> AsyncThrowingStream<GalleryItem, Error> {
+        AsyncThrowingStream {
+            throw StoreError.methodNotImplemented
         }
     }
 }
