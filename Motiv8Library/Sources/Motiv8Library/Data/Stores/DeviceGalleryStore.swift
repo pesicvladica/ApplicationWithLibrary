@@ -9,7 +9,7 @@ import Foundation
 import Photos
 
 /// A store for fetching media items (either images or videos) from the device's photo library.
-class DeviceGalleryStore: Store {
+class DeviceGalleryStore: ListStore {
     
     // MARK: Properties
     

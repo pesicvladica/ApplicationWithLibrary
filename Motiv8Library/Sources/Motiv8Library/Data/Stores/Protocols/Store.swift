@@ -13,11 +13,17 @@ import Foundation
 public protocol Store {
     
     var storeKey: StoreKey { get }
+}
+
+protocol ItemStore: Store {
     
     /// Fetches a single item and returns the result
     ///
     /// - Returns: Fetched item
     func fetchItem() async throws -> Any
+}
+
+protocol ListStore: Store {
     
     /// Fetches a list of items with pagination support (offset and limit).
     ///
@@ -27,6 +33,9 @@ public protocol Store {
     ///
     /// - Returns: List of fetched items
     func fetchList(offset: Int, limit: Int) async throws -> [Any]
+}
+
+protocol StreamStore: Store {
     
     /// Provides a continuous stream of items.
     ///

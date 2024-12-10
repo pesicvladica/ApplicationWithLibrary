@@ -9,7 +9,7 @@ import Foundation
 import Contacts
 
 /// A store that manages fetching contacts from the device with permission handling.
-class DeviceContactStore: Store {
+class DeviceContactStore: ListStore {
     
     // MARK: Properties
     
@@ -85,18 +85,6 @@ class DeviceContactStore: Store {
         }
         catch {
             throw StoreError.fetchFailed("Failed to fetch contacts.")
-        }
-    }
-    
-    // MARK: Unsupported methods
-    
-    func fetchItem() async throws -> Any {
-        throw StoreError.methodNotSupported("\(type(of: self))", #function)
-    }
-    
-    func stream() -> AsyncThrowingStream<Any, Error> {
-        AsyncThrowingStream {
-            throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }
     }
 }

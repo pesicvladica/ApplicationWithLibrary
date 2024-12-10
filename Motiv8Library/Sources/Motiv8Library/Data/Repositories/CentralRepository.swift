@@ -25,21 +25,21 @@ public final class CentralRepository: FetchingRepository {
     }
     
     public func fetchItem(fromStoreForKey key: StoreKey) async throws -> Any {
-        guard let store = stores[key] else {
+        guard let store = stores[key] as? ItemStore else {
             throw RepositoryError.storeNotFound
         }
         return try await store.fetchItem()
     }
     
     public func fetchItems(fromStoreForKey key: StoreKey, offset: Int, limit: Int) async throws -> [Any] {
-        guard let store = stores[key] else {
+        guard let store = stores[key] as? ListStore else {
             throw RepositoryError.storeNotFound
         }
         return try await store.fetchList(offset: offset, limit: limit)
     }
     
     public func itemStream(forStoreKey key: StoreKey) -> AsyncThrowingStream<Any, Error> {
-        guard let store = stores[key] else {
+        guard let store = stores[key] as? StreamStore else {
             return AsyncThrowingStream { continuation in
                 continuation.finish(throwing: RepositoryError.storeNotFound)
             }

@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 /// A store for fetching information about the device.
-class DeviceInfoStore: Store {
+class DeviceInfoStore: ItemStore {
 
     // MARK: Properties
     
