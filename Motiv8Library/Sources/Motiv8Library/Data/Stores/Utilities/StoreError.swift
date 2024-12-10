@@ -11,15 +11,12 @@ import Foundation
 
 /// Represents errors that can occur within the data stores.
 public enum StoreError: Error, LocalizedError, Equatable {
-    case methodNotSupported(String, String)
     case accessDenied(String)
     case fetchFailed(String)
 
     /// Custom error descriptions for each error case.
     public var errorDescription: String? {
         switch self {
-        case .methodNotSupported(let component, let method):
-            return "\(component) does not suppot \(method)" // Message detailing which component does not support specific method
         case .accessDenied(let message):
             return message // Message detailing why access was denied.
         case .fetchFailed(let message):

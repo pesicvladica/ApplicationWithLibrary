@@ -55,16 +55,4 @@ class DeviceInfoStore: ItemStore {
 
         return deviceItem
     }
-    
-    // MARK: Unsupported methods
-    
-    func fetchList(offset: Int, limit: Int) async throws -> [Any] {
-        throw StoreError.methodNotSupported("\(type(of: self))", #function)
-    }
-    
-    func stream() -> AsyncThrowingStream<Any, Error> {
-        AsyncThrowingStream {
-            throw StoreError.methodNotSupported("\(type(of: self))", #function)
-        }
-    }
 }

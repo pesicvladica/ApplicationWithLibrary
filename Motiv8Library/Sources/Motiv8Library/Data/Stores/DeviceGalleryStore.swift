@@ -126,16 +126,4 @@ class DeviceGalleryStore: ListStore {
 
         return mediaItems
     }
-    
-    // MARK: Unsupported methods
-    
-    func fetchItem() async throws -> Any {
-        throw StoreError.methodNotSupported("\(type(of: self))", #function)
-    }
-    
-    func stream() -> AsyncThrowingStream<Any, Error> {
-        AsyncThrowingStream {
-            throw StoreError.methodNotSupported("\(type(of: self))", #function)
-        }
-    }
 }
