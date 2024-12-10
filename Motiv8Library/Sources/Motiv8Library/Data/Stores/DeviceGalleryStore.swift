@@ -127,12 +127,12 @@ class DeviceGalleryStore<GalleryItem>: Store {
     // MARK: Unsupported methods
     
     func fetchItem() async throws -> GalleryItem {
-        throw StoreError.methodNotImplemented
+        throw StoreError.methodNotSupported("\(type(of: self))", #function)
     }
     
     func stream() -> AsyncThrowingStream<GalleryItem, Error> {
         AsyncThrowingStream {
-            throw StoreError.methodNotImplemented
+            throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }
     }
 }

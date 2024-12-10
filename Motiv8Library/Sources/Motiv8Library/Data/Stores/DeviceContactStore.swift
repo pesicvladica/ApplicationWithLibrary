@@ -91,12 +91,12 @@ class DeviceContactStore: Store {
     // MARK: Unsupported methods
     
     func fetchItem() async throws -> ContactItem {
-        throw StoreError.methodNotImplemented
+        throw StoreError.methodNotSupported("\(type(of: self))", #function)
     }
     
     func stream() -> AsyncThrowingStream<ContactItem, Error> {
         AsyncThrowingStream {
-            throw StoreError.methodNotImplemented
+            throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }
     }
 }

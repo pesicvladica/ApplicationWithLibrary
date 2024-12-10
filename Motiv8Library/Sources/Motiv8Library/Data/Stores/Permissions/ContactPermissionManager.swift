@@ -13,7 +13,7 @@ import Contacts
 /// A class that manages the permission request for contacts using the `CNContactStore` API.
 class ContactPermissionManager: Permission {
     
-    private func requestContactsListAuthorization() async -> (Bool, Error?) {
+    private func requestContactsListAuthorization() async -> (granted: Bool, error: Error?) {
         await withCheckedContinuation { continuation in
             CNContactStore().requestAccess(for: .contacts) { granted, error in
                 continuation.resume(returning: (granted, error))
@@ -26,8 +26,8 @@ class ContactPermissionManager: Permission {
         Task {
             let status = await requestContactsListAuthorization()
             
-            if !status.0 {
-                throw StoreError.accessDenied(status.1?.localizedDescription ?? "Access to contacts was denied.")
+            if !status.granted {
+                throw StoreError.accessDenied(status.error?.localizedDescription ?? "Access to contacts was denied.")
             }
         }
     }

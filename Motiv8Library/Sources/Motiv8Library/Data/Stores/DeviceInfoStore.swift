@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 /// A store for fetching information about the device.
-class DeviceInfoStore: Store<DeviceItem> {
+class DeviceInfoStore: Store {
+    typealias Item = DeviceItem
 
     // MARK: Properties
     
@@ -31,18 +32,17 @@ class DeviceInfoStore: Store<DeviceItem> {
     ///
     /// This method gathers various details about the device, such as its identifier, system name, system version,
     /// screen resolution, and manufacturer. The information is then packaged into a `DeviceItem` object and returned
-    /// via the completion handler.
     ///
-    /// - Parameters:
-    ///    - onCompletion: A closure that is called with a result containing either the `DeviceItem` with the device details or an error.
+    /// - Returns:
+    ///    - DeviceItem object containg device specific data
     ///
     /// - Note: This method retrieves data from `UIDevice` and `UIApplication` to generate the device information.
-    override func fetchItem(_ onCompletion: @escaping (Result<DeviceItem, Error>) -> Void) {
-        let identifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
-        let systemName = device.systemName
-        let systemVersion = device.systemVersion
-        let screen = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
-        let screenSize = screen?.windows.first?.frame.size ?? UIScreen.main.bounds.size
+    func fetchItem() async throws -> DeviceItem  {
+        let identifierForVendor = await device.identifierForVendor?.uuidString ?? "N/A"
+        let systemName = await device.systemName
+        let systemVersion = await device.systemVersion
+        let screen = await UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
+        let screenSize = await screen?.windows.first?.frame.size ?? CGSize.zero
         
         let deviceItem = DeviceItem(id: identifierForVendor,
                                     title: systemName,
@@ -50,6 +50,18 @@ class DeviceInfoStore: Store<DeviceItem> {
                                     manufacturer: "Apple",
                                     screenResolution: screenSize)
 
-        onCompletion(.success(deviceItem))
+        return deviceItem
+    }
+    
+    // MARK: Unsupported methods
+    
+    func fetchList(offset: Int, limit: Int) async throws -> [DeviceItem] {
+        throw StoreError.methodNotSupported("\(type(of: self))", #function)
+    }
+    
+    func stream() -> AsyncThrowingStream<DeviceItem, Error> {
+        AsyncThrowingStream {
+            throw StoreError.methodNotSupported("\(type(of: self))", #function)
+        }
     }
 }
