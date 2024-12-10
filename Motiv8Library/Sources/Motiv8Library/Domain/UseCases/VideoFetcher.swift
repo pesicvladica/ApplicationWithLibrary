@@ -76,13 +76,20 @@ public final class VideoFetcher: UseCase, VideosListFetcherProtocol {
         Task.detached { [weak self] in
             guard let self else { return }
             
-            self.repository.fetchListData(ofType: VideoItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                Task {
-                    await MainActor.run {
-                        onCompletion(result)
-                    }
+            do {
+                let videos = try await self.repository.fetchItems(fromStoreForKey: StoreKey.video, offset: self.currentOffset, limit: self.pageLimit)
+                
+                let mappedVideos = videos.compactMap({$0 as? VideoItem})
+                await MainActor.run {
+                    onCompletion(.success(mappedVideos))
                 }
             }
+            catch (let error) {
+                await MainActor.run {
+                    onCompletion(.failure(error))
+                }
+            }
+            
             self.currentOffset += self.pageLimit
         }
     }

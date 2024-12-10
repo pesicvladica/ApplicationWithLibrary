@@ -14,6 +14,8 @@ class DeviceInfoStore: Store {
 
     // MARK: Properties
     
+    private(set) var storeKey: StoreKey
+    
     private let device: UIDevice
     
     // MARK: Initialization
@@ -23,6 +25,8 @@ class DeviceInfoStore: Store {
     /// - Parameters:
     ///    - device: An instance of `UIDevice` used to fetch the device information (defaults to `UIDevice.current`).
     init(device: UIDevice = UIDevice.current) {
+        
+        self.storeKey = StoreKey.deviceInfo
         self.device = device
     }
     

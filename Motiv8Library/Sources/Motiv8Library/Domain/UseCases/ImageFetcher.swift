@@ -76,13 +76,20 @@ public final class ImageFetcher: UseCase, ImagesListFetcherProtocol {
         Task.detached { [weak self] in
             guard let self else { return }
             
-            self.repository.fetchListData(ofType: ImageItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                Task {
-                    await MainActor.run {
-                        onCompletion(result)
-                    }
+            do {
+                let images = try await self.repository.fetchItems(fromStoreForKey: StoreKey.image, offset: self.currentOffset, limit: self.pageLimit)
+                
+                let mappedImages = images.compactMap({$0 as? ImageItem})
+                await MainActor.run {
+                    onCompletion(.success(mappedImages))
                 }
             }
+            catch (let error) {
+                await MainActor.run {
+                    onCompletion(.failure(error))
+                }
+            }
+
             self.currentOffset += self.pageLimit
         }
     }

@@ -10,9 +10,10 @@ import Contacts
 
 /// A store that manages fetching contacts from the device with permission handling.
 class DeviceContactStore: Store {
-    typealias Item = ContactItem
     
     // MARK: Properties
+    
+    private(set) var storeKey: StoreKey
     
     private let permissionManager: Permission
     private let contactStore: CNContactStore
@@ -27,6 +28,7 @@ class DeviceContactStore: Store {
     init(permissionManager: Permission = ContactPermissionManager(),
          contactStore: CNContactStore = CNContactStore()) {
         
+        self.storeKey = StoreKey.contact
         self.permissionManager = permissionManager
         self.contactStore = contactStore
     }
@@ -37,7 +39,7 @@ class DeviceContactStore: Store {
     /// - Parameters:
     ///   - offset: The starting index for fetching contacts.
     ///   - limit: The maximum number of contacts to fetch.
-    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [ContactItem] {
+    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
         do {
             try await self.permissionManager.requestPermission()
         }
@@ -90,11 +92,11 @@ class DeviceContactStore: Store {
     
     // MARK: Unsupported methods
     
-    func fetchItem() async throws -> ContactItem {
+    func fetchItem() async throws -> Any {
         throw StoreError.methodNotSupported("\(type(of: self))", #function)
     }
     
-    func stream() -> AsyncThrowingStream<ContactItem, Error> {
+    func stream() -> AsyncThrowingStream<Any, Error> {
         AsyncThrowingStream {
             throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }

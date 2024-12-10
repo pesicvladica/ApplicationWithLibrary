@@ -72,13 +72,21 @@ public final class ContactFetcher: UseCase, ContactsListFetcherProtocol {
     public func getNextPage(_ onCompletion: @escaping (Result<[ContactItem], Error>) -> Void) {
         Task.detached { [weak self] in
             guard let self else { return }
-            self.repository.fetchListData(ofType: ContactItem.self, offset: self.currentOffset, limit: self.pageLimit) { result in
-                Task {
-                    await MainActor.run {
-                        onCompletion(result)
-                    }
+            
+            do {
+                let contacts = try await self.repository.fetchItems(fromStoreForKey: StoreKey.contact, offset: self.currentOffset, limit: self.pageLimit)
+                
+                let mappedContacts = contacts.compactMap({$0 as? ContactItem})
+                await MainActor.run {
+                    onCompletion(.success(mappedContacts))
                 }
             }
+            catch (let error) {
+                await MainActor.run {
+                    onCompletion(.failure(error))
+                }
+            }
+            
             self.currentOffset += self.pageLimit
         }
     }

@@ -9,10 +9,11 @@ import Foundation
 import Photos
 
 /// A store for fetching media items (either images or videos) from the device's photo library.
-class DeviceGalleryStore<GalleryItem>: Store {
-    typealias Item = GalleryItem
+class DeviceGalleryStore: Store {
     
     // MARK: Properties
+    
+    private(set) var storeKey: StoreKey
     
     private let mediaType: PHAssetMediaType
     private let permissionManager: Permission
@@ -31,6 +32,8 @@ class DeviceGalleryStore<GalleryItem>: Store {
          permissionManager: Permission = PhotosPermissionManager(),
          phAsset: PHAsset.Type = PHAsset.self,
          phAssetResource: PHAssetResource.Type = PHAssetResource.self) {
+        
+        self.storeKey = mediaType == .image ? StoreKey.image : StoreKey.video
         self.mediaType = mediaType
         self.permissionManager = permissionManager
         self.phAsset = phAsset
@@ -55,7 +58,7 @@ class DeviceGalleryStore<GalleryItem>: Store {
                                  dateCreated: Date,
                                  fileSize: Int64,
                                  dimension: CGSize,
-                                 duration: Double) -> (any MediaItem)? {
+                                 duration: Double) -> Any? {
         switch self.mediaType {
         case .image:
             return ImageItem(id: identifier,
@@ -81,7 +84,7 @@ class DeviceGalleryStore<GalleryItem>: Store {
     ///   - offset: The starting index for fetching items.
     ///   - limit: The maximum number of items to fetch.
     /// - Returns: List of items fetched from gallery.
-    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [GalleryItem] {
+    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
         do {
             try await self.permissionManager.requestPermission()
         }
@@ -92,7 +95,7 @@ class DeviceGalleryStore<GalleryItem>: Store {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
-        var mediaItems: [GalleryItem] = []
+        var mediaItems: [Any] = []
         let results = self.phAsset.fetchAssets(with: self.mediaType, options: fetchOptions)
         results.enumerateObjects { asset, index, stop in
             
@@ -115,7 +118,7 @@ class DeviceGalleryStore<GalleryItem>: Store {
                                                         dateCreated: dateCreated,
                                                         fileSize: fileSize,
                                                         dimension: dimension,
-                                                        duration: duration) as? GalleryItem {
+                                                        duration: duration) {
                     mediaItems.append(mediaItem)
                 }
             }
@@ -126,11 +129,11 @@ class DeviceGalleryStore<GalleryItem>: Store {
     
     // MARK: Unsupported methods
     
-    func fetchItem() async throws -> GalleryItem {
+    func fetchItem() async throws -> Any {
         throw StoreError.methodNotSupported("\(type(of: self))", #function)
     }
     
-    func stream() -> AsyncThrowingStream<GalleryItem, Error> {
+    func stream() -> AsyncThrowingStream<Any, Error> {
         AsyncThrowingStream {
             throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }

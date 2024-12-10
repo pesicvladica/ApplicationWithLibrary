@@ -37,12 +37,16 @@ public class Motiv8Library {
     ///   - `ContactItem`: Fetched from `DeviceContactStore`.
     ///   - `ImageItem`: Fetched from `DeviceGalleryStore` for `.image` type.
     ///   - `VideoItem`: Fetched from `DeviceGalleryStore` for `.video` type.
-    private static let defaultRepository = GenericFetchingRepository(stores: [
-        String(describing: DeviceItem.self) : DeviceInfoStore(),
-        String(describing: ContactItem.self) : DeviceContactStore(),
-        String(describing: ImageItem.self) : DeviceGalleryStore<ImageItem>(mediaType: .image),
-        String(describing: VideoItem.self) : DeviceGalleryStore<VideoItem>(mediaType: .video)
-    ])
+    private static let defaultRepository: CentralRepository = {
+        let repository = CentralRepository()
+        
+        repository.registerStore(DeviceInfoStore())
+        repository.registerStore(DeviceContactStore())
+        repository.registerStore(DeviceGalleryStore(mediaType: .image))
+        repository.registerStore(DeviceGalleryStore(mediaType: .video))
+        
+        return repository
+    }()
     
     // MARK: Public properties
     
