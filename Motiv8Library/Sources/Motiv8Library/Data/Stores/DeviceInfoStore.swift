@@ -10,7 +10,6 @@ import UIKit
 
 /// A store for fetching information about the device.
 class DeviceInfoStore: Store {
-    typealias Item = DeviceItem
 
     // MARK: Properties
     
@@ -41,7 +40,7 @@ class DeviceInfoStore: Store {
     ///    - DeviceItem object containg device specific data
     ///
     /// - Note: This method retrieves data from `UIDevice` and `UIApplication` to generate the device information.
-    func fetchItem() async throws -> DeviceItem  {
+    func fetchItem() async throws -> Any  {
         let identifierForVendor = await device.identifierForVendor?.uuidString ?? "N/A"
         let systemName = await device.systemName
         let systemVersion = await device.systemVersion
@@ -59,11 +58,11 @@ class DeviceInfoStore: Store {
     
     // MARK: Unsupported methods
     
-    func fetchList(offset: Int, limit: Int) async throws -> [DeviceItem] {
+    func fetchList(offset: Int, limit: Int) async throws -> [Any] {
         throw StoreError.methodNotSupported("\(type(of: self))", #function)
     }
     
-    func stream() -> AsyncThrowingStream<DeviceItem, Error> {
+    func stream() -> AsyncThrowingStream<Any, Error> {
         AsyncThrowingStream {
             throw StoreError.methodNotSupported("\(type(of: self))", #function)
         }
