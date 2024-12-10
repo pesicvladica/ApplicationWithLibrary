@@ -58,14 +58,12 @@ class DeviceContactStore: Store {
             var contactsCount = 0
             try self.contactStore.enumerateContacts(with: request) { contact, stop in
                 
-                // Increase counter until element on offset index is reached
-                while contactsCount < offset {
-                    contactsCount += 1
-                }
-                
                 // Pagination logic to stop once the offset and limit are met.
                 if contacts.count >= limit {
                     stop.pointee = true
+                }
+                else if contactsCount < offset {
+                    contactsCount += 1
                 }
                 else if contacts.count + contactsCount >= offset {
                     
