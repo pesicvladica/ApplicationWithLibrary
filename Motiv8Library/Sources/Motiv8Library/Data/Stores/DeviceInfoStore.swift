@@ -13,23 +13,26 @@ class DeviceInfoStore: ItemStore {
 
     // MARK: Properties
     
-    private(set) var storeKey: StoreKey
+    private(set) var storeKey: StoreType
     
-    private let device: UIDevice
+    private let device: DeviceProtocol
+    private let application: ApplicationProtocol
     
     // MARK: Initialization
     
     /// Initializes a new `DeviceInfoStore` instance to fetch device information.
     ///
     /// - Parameters:
-    ///    - device: An instance of `UIDevice` used to fetch the device information (defaults to `UIDevice.current`).
-    init(device: UIDevice = UIDevice.current) {
+    ///    - device: An instance of `DeviceProtocol` used to fetch the device information.
+    ///    - application: An instance of `ApplicationProtocol` used to fetch the screen information.
+    init(device: DeviceProtocol, application: ApplicationProtocol) {
         
-        self.storeKey = StoreKey.deviceInfo
+        self.storeKey = StoreType.deviceInfo
         self.device = device
+        self.application = application
     }
     
-    // MARK: Store<> methods
+    // MARK: Store methods
     
     /// Fetches information about the current device.
     ///
@@ -41,10 +44,10 @@ class DeviceInfoStore: ItemStore {
     ///
     /// - Note: This method retrieves data from `UIDevice` and `UIApplication` to generate the device information.
     func fetchItem() async throws -> Any  {
-        let identifierForVendor = await device.identifierForVendor?.uuidString ?? "N/A"
-        let systemName = await device.systemName
-        let systemVersion = await device.systemVersion
-        let screen = await UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
+        let identifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
+        let systemName = device.systemName
+        let systemVersion = device.systemVersion
+        let screen = application.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
         let screenSize = await screen?.windows.first?.frame.size ?? CGSize.zero
         
         let deviceItem = DeviceItem(id: identifierForVendor,

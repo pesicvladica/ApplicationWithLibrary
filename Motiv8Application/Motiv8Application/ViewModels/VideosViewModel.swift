@@ -13,7 +13,7 @@ class VideosViewModel: ListViewModelProtocol {
     // MARK: Private properties
     
     // The fetcher used to retrieve the videos list.
-    private let fetcher: any VideosListFetcherProtocol
+    private let fetcher: any ListFetcher<VideoItem>
     
     // MARK: Public properties
     
@@ -27,7 +27,7 @@ class VideosViewModel: ListViewModelProtocol {
     /// Initializes the ViewModel with a fetcher.
     ///
     /// - Parameter fetcher: The fetcher that retrieves the videos list.
-    init(fetcher: any VideosListFetcherProtocol) {
+    init(fetcher: any ListFetcher<VideoItem>) {
         self.fetcher = fetcher
     }
 
@@ -35,7 +35,7 @@ class VideosViewModel: ListViewModelProtocol {
     
     // Fetches the next page of videos.
     func fetchNextPage() {
-        fetcher.getNextPage { [weak self] result in
+        fetcher.getItems(at: 0, with: 100) { [weak self] result in
             switch result {
             case .success(let fetchedVideos):
                 self?.listItems.append(contentsOf: fetchedVideos)
@@ -50,7 +50,6 @@ class VideosViewModel: ListViewModelProtocol {
     
     // Resets the videos list and fetches the first page.
     func resetAndFetch() {
-        fetcher.reset()
         listItems.removeAll()
         fetchNextPage()
     }

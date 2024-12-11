@@ -13,7 +13,7 @@ class ContactsViewModel: ListViewModelProtocol {
     // MARK: Private properties
     
     // The fetcher used to retrieve the contacts list.
-    private let fetcher: any ContactsListFetcherProtocol
+    private let fetcher: any ListFetcher<ContactItem>
     
     // MARK: Public properties
     
@@ -27,7 +27,7 @@ class ContactsViewModel: ListViewModelProtocol {
     /// Initializes the ViewModel with a fetcher.
     ///
     /// - Parameter fetcher: The fetcher that retrieves the contacts list.
-    init(fetcher: any ContactsListFetcherProtocol) {
+    init(fetcher: any ListFetcher<ContactItem>) {
         self.fetcher = fetcher
     }
 
@@ -35,7 +35,7 @@ class ContactsViewModel: ListViewModelProtocol {
     
     // Fetches the next page of contacts.
     func fetchNextPage() {
-        fetcher.getNextPage { [weak self] result in
+        fetcher.getItems(at: 0, with: 100) { [weak self] result in
             switch result {
             case .success(let fetchedContacts):
                 self?.listItems.append(contentsOf: fetchedContacts)
@@ -50,7 +50,6 @@ class ContactsViewModel: ListViewModelProtocol {
     
     // Resets the contacts list and fetches the first page.
     func resetAndFetch() {
-        fetcher.reset()
         listItems.removeAll()
         fetchNextPage()
     }

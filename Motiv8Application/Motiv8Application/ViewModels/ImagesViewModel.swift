@@ -13,7 +13,7 @@ class ImagesViewModel: ListViewModelProtocol {
     // MARK: Private properties
     
     // The fetcher used to retrieve the images list.
-    private let fetcher: any ImagesListFetcherProtocol
+    private let fetcher: any ListFetcher<ImageItem>
     
     // MARK: Public properties
     
@@ -27,7 +27,7 @@ class ImagesViewModel: ListViewModelProtocol {
     /// Initializes the ViewModel with a fetcher.
     ///
     /// - Parameter fetcher: The fetcher that retrieves the images list.
-    init(fetcher: any ImagesListFetcherProtocol) {
+    init(fetcher: any ListFetcher<ImageItem>) {
         self.fetcher = fetcher
     }
 
@@ -35,7 +35,7 @@ class ImagesViewModel: ListViewModelProtocol {
     
     // Fetches the next page of images.
     func fetchNextPage() {
-        fetcher.getNextPage { [weak self] result in
+        fetcher.getItems(at: 0, with: 100) { [weak self] result in
             switch result {
             case .success(let fetchedImages):
                 self?.listItems.append(contentsOf: fetchedImages)
@@ -50,7 +50,6 @@ class ImagesViewModel: ListViewModelProtocol {
     
     // Resets the images list and fetches the first page.
     func resetAndFetch() {
-        fetcher.reset()
         listItems.removeAll()
         fetchNextPage()
     }

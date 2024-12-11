@@ -29,25 +29,8 @@ public class Motiv8Library {
     // MARK: Private properties
     
     /// Repository used for fetching and managing data from various stores.
-    private let repository: FetchingRepository
-    
-    /// A default repository instance that provides real data sources for different item types.
-    /// - Includes:
-    ///   - `DeviceItem`: Fetched from `DeviceInfoStore`.
-    ///   - `ContactItem`: Fetched from `DeviceContactStore`.
-    ///   - `ImageItem`: Fetched from `DeviceGalleryStore` for `.image` type.
-    ///   - `VideoItem`: Fetched from `DeviceGalleryStore` for `.video` type.
-    private static let defaultRepository: CentralRepository = {
-        let repository = CentralRepository()
+    private let registry: StoreRegistry
         
-        repository.registerStore(DeviceInfoStore())
-        repository.registerStore(DeviceContactStore())
-        repository.registerStore(DeviceGalleryStore(mediaType: .image))
-        repository.registerStore(DeviceGalleryStore(mediaType: .video))
-        
-        return repository
-    }()
-    
     // MARK: Public properties
     
     /// Fetcher for retrieving device-specific information.
@@ -56,8 +39,8 @@ public class Motiv8Library {
     /// ```swift
     /// library.infoFetcher.collect { result in ... }
     /// ```
-    public lazy var infoFetcher: InfoFetcher = {
-        let fetcher = InfoFetcher(repository: repository)
+    public lazy var infoFetcher: Fetcher<DeviceItem> = {
+        let fetcher = Fetcher<DeviceItem>(registry: registry, storeType: .deviceInfo)
         return fetcher
     }()
     
@@ -67,8 +50,8 @@ public class Motiv8Library {
     /// ```swift
     /// library.contactFetcher.getNextPage { result in ... }
     /// ```
-    public lazy var contactFetcher: ContactFetcher = {
-        let fetcher = ContactFetcher(repository: repository)
+    public lazy var contactFetcher: Fetcher<ContactItem> = {
+        let fetcher = Fetcher<ContactItem>(registry: registry, storeType: .contact)
         return fetcher
     }()
     
@@ -78,8 +61,8 @@ public class Motiv8Library {
     /// ```swift
     /// library.imageFetcher.prefetchAllItems { result in ... }
     /// ```
-    public lazy var imageFetcher: ImageFetcher = {
-        let fetcher = ImageFetcher(repository: repository)
+    public lazy var imageFetcher: Fetcher<ImageItem> = {
+        let fetcher = Fetcher<ImageItem>(registry: registry, storeType: .image)
         return fetcher
     }()
     
@@ -89,8 +72,8 @@ public class Motiv8Library {
     /// ```swift
     /// library.videoFetcher.getNextPage { result in ... }
     /// ```
-    public lazy var videoFetcher: VideoFetcher = {
-        let fetcher = VideoFetcher(repository: repository)
+    public lazy var videoFetcher: Fetcher<VideoItem> = {
+        let fetcher = Fetcher<VideoItem>(registry: registry, storeType: .video)
         return fetcher
     }()
     
@@ -103,12 +86,23 @@ public class Motiv8Library {
     /// let customRepo = MockFetchingRepository(...)
     /// let library = Motiv8Library(repository: customRepo)
     /// ```
-    public init(repository: FetchingRepository? = nil) {
-        if let repo = repository {
-            self.repository = repo
-        }
-        else {
-            self.repository = Motiv8Library.defaultRepository
-        }
+    public init(registry: StoreRegistry) {
+        self.registry = registry
+    }
+    
+    // Factory method to allow for easy creation of the default registry
+    public static func createDefaultLibrary() -> Motiv8Library {
+        let storeFactory = MainStoreFactory()
+        let registry = CentralRegistry(storeFactory: storeFactory)
+        registry.registerStores(StoreType.allCases)
+        return Motiv8Library(registry: registry)
+    }
+    
+    // Factory method to allow for easy creation of the limited registry
+    public static func createLibraryWith(stores: [StoreType]) -> Motiv8Library {
+        let storeFactory = MainStoreFactory()
+        let registry = CentralRegistry(storeFactory: storeFactory)
+        registry.registerStores(stores)
+        return Motiv8Library(registry: registry)
     }
 }

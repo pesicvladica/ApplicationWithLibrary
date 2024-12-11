@@ -153,7 +153,7 @@ class UseCaseTests: XCTestCase {
         
         let expectation = self.expectation(description: #function)
         
-        mockFetcher.collect { result in
+        mockFetcher.get { result in
             switch result {
             case .success(let item):
                 XCTAssertEqual(item.id, testDevice.id, "Id should match")
@@ -172,7 +172,7 @@ class UseCaseTests: XCTestCase {
 
         let expectation = self.expectation(description: #function)
 
-        mockFetcher.collect { result in
+        mockFetcher.get { result in
             switch result {
             case .success:
                 XCTFail("Expected failure, but got success")

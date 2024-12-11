@@ -13,22 +13,22 @@ class DeviceContactStore: ListStore {
     
     // MARK: Properties
     
-    private(set) var storeKey: StoreKey
+    private(set) var storeKey: StoreType
     
     private let permissionManager: Permission
-    private let contactStore: CNContactStore
+    private let contactStore: ContactStoreProtocol
     
     // MARK: Initialization
     
     /// Initializes a new `DeviceContactStore` instance to fetch contacts.
     ///
     /// - Parameters:
-    ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests (defaults to `ContactPermissionManager`).
-    ///    - contactStore: The object used to fetch and manage contacts (defaults to `CNContactStore`).
-    init(permissionManager: Permission = ContactPermissionManager(),
-         contactStore: CNContactStore = CNContactStore()) {
+    ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests.
+    ///    - contactStore: The object used to fetch and manage contacts.
+    init(permissionManager: Permission,
+         contactStore: ContactStoreProtocol) {
         
-        self.storeKey = StoreKey.contact
+        self.storeKey = StoreType.contact
         self.permissionManager = permissionManager
         self.contactStore = contactStore
     }
@@ -40,12 +40,7 @@ class DeviceContactStore: ListStore {
     ///   - offset: The starting index for fetching contacts.
     ///   - limit: The maximum number of contacts to fetch.
     func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
-        do {
-            try await self.permissionManager.requestPermission()
-        }
-        catch (let error) {
-            throw error
-        }
+        try await self.permissionManager.requestPermission()
         
         do {
             let keysToFetch = [CNContactGivenNameKey,

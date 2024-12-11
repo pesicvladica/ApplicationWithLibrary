@@ -13,14 +13,14 @@ class InfoViewModel: ItemViewModelProtocol {
     // MARK: Private properties
     
     // The fetcher used to get device information.
-    private let fetcher: any InfoItemFetcherProtocol
+    private let fetcher: any ItemFetcher<DeviceItem>
     
     // MARK: Initialization
     
     /// Initializes the ViewModel with a fetcher.
     ///
     /// - Parameter fetcher: The fetcher that retrieves the device information.
-    init(fetcher: any InfoItemFetcherProtocol) {
+    init(fetcher: any ItemFetcher<DeviceItem>) {
         self.fetcher = fetcher
     }
     
@@ -34,7 +34,7 @@ class InfoViewModel: ItemViewModelProtocol {
     // Calls the fetcher's `collect` method and returns the result via `onItemFetched`.
     func fetchItem() {
         if let onCompletion = onItemFetched {
-            fetcher.collect { result in
+            fetcher.getItem { result in
                 switch result {
                 case .success(let success):
                     onCompletion(.success(success))

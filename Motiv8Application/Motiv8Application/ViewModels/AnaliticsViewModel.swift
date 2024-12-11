@@ -97,7 +97,7 @@ class AnaliticsViewModel {
     // MARK: Public methods
     
     func calculateForContacts() {
-        self.motivateLibrary.contactFetcher.prefetchAllItems { [weak self] result in
+        self.motivateLibrary.contactFetcher.getItems { [weak self] result in
             switch result {
             case .success(let fetchedContacts):
                 let data = self?.analizeContactList(contacts: fetchedContacts)
@@ -109,7 +109,7 @@ class AnaliticsViewModel {
     }
     
     func calculateForImages() {
-        self.motivateLibrary.imageFetcher.prefetchAllItems { [weak self] result in
+        self.motivateLibrary.imageFetcher.getItems { [weak self] result in
             switch result {
             case .success(let fetchedimages):
                 let data = self?.analizeImageList(images: fetchedimages)
@@ -121,7 +121,7 @@ class AnaliticsViewModel {
     }
     
     func calculateForVideos() {
-        self.motivateLibrary.videoFetcher.prefetchAllItems { [weak self] result in
+        self.motivateLibrary.videoFetcher.getItems { [weak self] result in
             switch result {
             case .success(let fetchedVideos):
                 let data = self?.analizeVideosList(videos: fetchedVideos)

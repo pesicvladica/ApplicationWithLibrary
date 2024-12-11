@@ -15,7 +15,13 @@ class PhotosPermissionManager: Permission {
     
     private func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
         await withCheckedContinuation { continuation in
-            PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
+            let status = PHPhotoLibrary.authorizationStatus()
+            if status == .notDetermined {
+                PHPhotoLibrary.requestAuthorization(for: .readWrite) { requestStatus in
+                    continuation.resume(returning: requestStatus)
+                }
+            }
+            else {
                 continuation.resume(returning: status)
             }
         }
@@ -23,19 +29,22 @@ class PhotosPermissionManager: Permission {
     
     /// Requests permission to access the photo library.
     func requestPermission() async throws {
-        Task {
-            let status = await requestPhotoLibraryAuthorization()
+        let status = await requestPhotoLibraryAuthorization()
 
-            switch status {
-            case .authorized, .limited:
-                return
-            case .denied, .restricted:
-                throw StoreError.accessDenied("Access to photo library was denied.")
-            case .notDetermined:
-                try await requestPermission()
-            @unknown default:
-                throw StoreError.accessDenied("Unexpected authorization status.")
-            }
+        switch status {
+        case .authorized, .limited:
+            debugPrint("ALLOWED")
+            return
+        case .denied, .restricted:
+            debugPrint("DENIED")
+            throw StoreError.accessDenied("Access to photo library was denied.")
+        case .notDetermined:
+            /// This should not happen since in request we check if state is not determined and request acces if needed
+            debugPrint("NOT DETERMINED!")
+            return
+        @unknown default:
+            debugPrint("UNKNOWN")
+            throw StoreError.accessDenied("Unexpected authorization status.")
         }
     }
 }

@@ -13,12 +13,12 @@ class DeviceGalleryStore: ListStore {
     
     // MARK: Properties
     
-    private(set) var storeKey: StoreKey
+    private(set) var storeKey: StoreType
     
     private let mediaType: PHAssetMediaType
     private let permissionManager: Permission
-    private let phAsset: PHAsset.Type
-    private let phAssetResource: PHAssetResource.Type
+    private let phAsset: PHAssetProtocol.Type
+    private let phAssetResource: PHAssetResourceProtocol.Type
     
     // MARK: Initialization
     
@@ -26,14 +26,15 @@ class DeviceGalleryStore: ListStore {
     ///
     /// - Parameters:
     ///    - mediaType: The type of media to fetch (`.image` or `.video`).
-    ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests (defaults to `PhotosPermissionManager`).
-    ///    - phAsset: The class used to fetch and manage photo assets (defaults to `PHAsset.self`).
+    ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests.
+    ///    - phAsset: The class used to fetch and manage photo assets.
+    ///    - phAssetResource: The class used to fetch file size of assets.
     init(mediaType: PHAssetMediaType,
-         permissionManager: Permission = PhotosPermissionManager(),
-         phAsset: PHAsset.Type = PHAsset.self,
-         phAssetResource: PHAssetResource.Type = PHAssetResource.self) {
+         permissionManager: Permission,
+         phAsset: PHAssetProtocol.Type,
+         phAssetResource: PHAssetResourceProtocol.Type) {
         
-        self.storeKey = mediaType == .image ? StoreKey.image : StoreKey.video
+        self.storeKey = mediaType == .image ? StoreType.image : StoreType.video
         self.mediaType = mediaType
         self.permissionManager = permissionManager
         self.phAsset = phAsset
@@ -85,12 +86,7 @@ class DeviceGalleryStore: ListStore {
     ///   - limit: The maximum number of items to fetch.
     /// - Returns: List of items fetched from gallery.
     func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
-        do {
-            try await self.permissionManager.requestPermission()
-        }
-        catch (let error) {
-            throw error
-        }
+        try await self.permissionManager.requestPermission()
         
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]

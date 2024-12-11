@@ -23,12 +23,10 @@ class ContactPermissionManager: Permission {
     
     /// Requests permission to access contacts.
     func requestPermission() async throws {
-        Task {
-            let status = await requestContactsListAuthorization()
-            
-            if !status.granted {
-                throw StoreError.accessDenied(status.error?.localizedDescription ?? "Access to contacts was denied.")
-            }
+        let status = await requestContactsListAuthorization()
+        
+        if !status.granted {
+            throw StoreError.accessDenied(status.error?.localizedDescription ?? "Access to contacts was denied.")
         }
     }
 }

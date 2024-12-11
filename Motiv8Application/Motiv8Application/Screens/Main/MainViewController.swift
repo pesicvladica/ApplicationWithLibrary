@@ -22,7 +22,7 @@ class MainViewController: UIViewController {
     // MARK: Properties
     
     // Instance of the Motiv8Library that provides fetchers for contacts, images, videos, and device info
-    let motiv8Lib = Motiv8Library()
+    let motiv8Lib = Motiv8Library.createDefaultLibrary()
     
     // Lazy initialization of the main view controller's view
     private lazy var controllerView: MainView = {

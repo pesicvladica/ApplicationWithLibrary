@@ -12,10 +12,10 @@ import Foundation
 /// Protocol for data stores. The associated type `Item` allows each store to fetch a specific type of item (e.g., contacts, images).
 public protocol Store {
     
-    var storeKey: StoreKey { get }
+    var storeKey: StoreType { get }
 }
 
-protocol ItemStore: Store {
+public protocol ItemStore: Store {
     
     /// Fetches a single item and returns the result
     ///
@@ -23,7 +23,7 @@ protocol ItemStore: Store {
     func fetchItem() async throws -> Any
 }
 
-protocol ListStore: Store {
+public protocol ListStore: Store {
     
     /// Fetches a list of items with pagination support (offset and limit).
     ///
@@ -35,7 +35,7 @@ protocol ListStore: Store {
     func fetchList(offset: Int, limit: Int) async throws -> [Any]
 }
 
-protocol StreamStore: Store {
+public protocol StreamStore: Store {
     
     /// Provides a continuous stream of items.
     ///
