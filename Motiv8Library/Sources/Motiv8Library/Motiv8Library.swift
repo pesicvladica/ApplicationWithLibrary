@@ -1,105 +1,81 @@
 import Foundation
 
-/// A centralized library providing access to various fetchers for device data, such as device information, contacts, images, and videos.
+/// A comprehensive library providing access to device data through configurable fetchers.
 ///
-/// `Motiv8Library` serves as an entry point for interacting with the data-fetching capabilities of the application.
-/// It utilizes a repository to manage and retrieve data from different stores.
-/// - Note: By default, it uses a real data repository for fetching information.
+/// The `Motiv8Library` serves as a high-level interface for retrieving device-related data, such as device
+/// information, contacts, images, and videos. It utilizes a `StoreRegistry` to manage and interact with
+/// underlying data stores, providing an abstraction layer for efficient data access.
 ///
-/// # Fetchers:
-/// - `infoFetcher`: Retrieves device-specific information.
-/// - `contactFetcher`: Accesses the user's contacts.
-/// - `imageFetcher`: Handles fetching metadata for device images.
-/// - `videoFetcher`: Handles fetching metadata for device videos.
-///
-/// # Example Usage:
-/// ```swift
-/// let library = Motiv8Library()
-/// library.contactFetcher.fetchNextPage { result in
-///     switch result {
-///     case .success(let contacts):
-///         print("Fetched contacts: \(contacts)")
-///     case .failure(let error):
-///         print("Error fetching contacts: \(error)")
-///     }
-/// }
-/// ```
+/// The library includes preconfigured fetchers for different types of data, and it can be customized to
+/// include only the necessary stores for specific use cases.
 public class Motiv8Library {
     
     // MARK: Private properties
     
-    /// Repository used for fetching and managing data from various stores.
+    /// The registry managing the underlying stores for data fetching.
     private let registry: StoreRegistry
         
     // MARK: Public properties
     
-    /// Fetcher for retrieving device-specific information.
-    /// - SeeAlso: `InfoFetcher`.
-    /// - Usage:
-    /// ```swift
-    /// library.infoFetcher.collect { result in ... }
-    /// ```
+    /// Fetcher for retrieving detailed information about the device.
     public lazy var infoFetcher: Fetcher<DeviceItem> = {
-        let fetcher = Fetcher<DeviceItem>(registry: registry, storeType: .deviceInfo)
-        return fetcher
+        Fetcher<DeviceItem>(registry: registry, storeType: InternalType.deviceInfo)
     }()
     
-    /// Fetcher for retrieving device contacts.
-    /// - SeeAlso: `ContactFetcher`.
-    /// - Usage:
-    /// ```swift
-    /// library.contactFetcher.getNextPage { result in ... }
-    /// ```
+    /// Fetcher for accessing contacts stored on the device.
     public lazy var contactFetcher: Fetcher<ContactItem> = {
-        let fetcher = Fetcher<ContactItem>(registry: registry, storeType: .contact)
-        return fetcher
+        Fetcher<ContactItem>(registry: registry, storeType: InternalType.contact)
     }()
     
-    /// Fetcher for retrieving metadata about device images.
-    /// - SeeAlso: `ImageFetcher`.
-    /// - Usage:
-    /// ```swift
-    /// library.imageFetcher.prefetchAllItems { result in ... }
-    /// ```
+    /// Fetcher for retrieving image assets from the device's photo gallery.
     public lazy var imageFetcher: Fetcher<ImageItem> = {
-        let fetcher = Fetcher<ImageItem>(registry: registry, storeType: .image)
-        return fetcher
+        Fetcher<ImageItem>(registry: registry, storeType: InternalType.image)
     }()
     
-    /// Fetcher for retrieving metadata about device videos.
-    /// - SeeAlso: `VideoFetcher`.
-    /// - Usage:
-    /// ```swift
-    /// library.videoFetcher.getNextPage { result in ... }
-    /// ```
+    /// Fetcher for retrieving video assets from the device's photo gallery.
     public lazy var videoFetcher: Fetcher<VideoItem> = {
-        let fetcher = Fetcher<VideoItem>(registry: registry, storeType: .video)
-        return fetcher
+        Fetcher<VideoItem>(registry: registry, storeType: InternalType.video)
     }()
     
     // MARK: Initialization
     
-    /// Initializes the `Motiv8Library` with a custom or default repository.
-    /// - Parameter repository: The repository instance to be used. If not provided, the default real data repository is used.
-    /// - Example:
-    /// ```swift
-    /// let customRepo = MockFetchingRepository(...)
-    /// let library = Motiv8Library(repository: customRepo)
-    /// ```
+    /// Initializes the library with a provided `StoreRegistry`.
+    ///
+    /// - Parameters:
+    ///   - registry: The registry used to manage and interact with data stores.
+    ///
+    /// This allows for dynamic interaction with registered stores and fetchers.
     public init(registry: StoreRegistry) {
         self.registry = registry
     }
     
-    // Factory method to allow for easy creation of the default registry
+    /// Creates a default library instance with all supported data stores preconfigured.
+    ///
+    /// This method initializes a `Motiv8Library` instance with the following fetchers:
+    /// - Device information fetcher
+    /// - Contact fetcher
+    /// - Image fetcher
+    /// - Video fetcher
+    ///
+    /// - Returns:
+    ///   - A fully configured `Motiv8Library` instance.
     public static func createDefaultLibrary() -> Motiv8Library {
         let storeFactory = MainStoreFactory()
         let registry = CentralRegistry(storeFactory: storeFactory)
-        registry.registerStores(StoreType.allCases)
+        registry.registerStores(InternalType.allCases)
         return Motiv8Library(registry: registry)
     }
     
-    // Factory method to allow for easy creation of the limited registry
-    public static func createLibraryWith(stores: [StoreType]) -> Motiv8Library {
+    /// Creates a library instance with a custom subset of supported data stores.
+    ///
+    /// - Parameters:
+    ///   - stores: An array of `InternalType` values specifying the stores to be registered.
+    /// This allows clients to optimize the library for specific use cases, such as only fetching
+    /// images or contacts.
+    ///
+    /// - Returns:
+    ///   - A `Motiv8Library` instance configured with the specified stores.
+    public static func createLibraryWith(stores: [InternalType]) -> Motiv8Library {
         let storeFactory = MainStoreFactory()
         let registry = CentralRegistry(storeFactory: storeFactory)
         registry.registerStores(stores)

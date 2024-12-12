@@ -10,9 +10,10 @@ import Contacts
 
 // MARK: - Utility for Contacts Permissions
 
-/// A class that manages the permission request for contacts using the `CNContactStore` API.
+/// A permission manager for handling contact access.
 class ContactPermissionManager: Permission {
     
+    /// Requests authorization for contact list access.
     private func requestContactsListAuthorization() async -> (granted: Bool, error: Error?) {
         await withCheckedContinuation { continuation in
             CNContactStore().requestAccess(for: .contacts) { granted, error in

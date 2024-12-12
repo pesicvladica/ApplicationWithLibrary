@@ -13,7 +13,7 @@ class DeviceContactStore: ListStore {
     
     // MARK: Properties
     
-    private(set) var storeKey: StoreType
+    private(set) var storeKey: any StoreType
     
     private let permissionManager: Permission
     private let contactStore: ContactStoreProtocol
@@ -24,11 +24,10 @@ class DeviceContactStore: ListStore {
     ///
     /// - Parameters:
     ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests.
-    ///    - contactStore: The object used to fetch and manage contacts.
+    ///    - contactStore: The object conforming to `ContactStoreProtocol` used to fetch and manage contacts.
     init(permissionManager: Permission,
          contactStore: ContactStoreProtocol) {
-        
-        self.storeKey = StoreType.contact
+        self.storeKey = InternalType.contact
         self.permissionManager = permissionManager
         self.contactStore = contactStore
     }
@@ -39,7 +38,10 @@ class DeviceContactStore: ListStore {
     /// - Parameters:
     ///   - offset: The starting index for fetching contacts.
     ///   - limit: The maximum number of contacts to fetch.
-    func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
+    ///   
+    /// - Returns:
+    ///   - Asynchronously returns array of contacts
+    func fetchList(offset: Int, limit: Int) async throws -> [Any] {
         try await self.permissionManager.requestPermission()
         
         do {

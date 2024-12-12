@@ -18,16 +18,19 @@ public protocol StoreRegistry {
     ///   - stores: The stores to register. Available stores are defined in StoreType enum
     ///
     /// - Note: Registering a store which was already registred will overwrite the previous store.
-    func registerStores(_ stores: [StoreType])
+    func registerStores(_ stores: [any StoreType])
     
     /// Fetches a single item from the store associated with the given key.
     ///
-    /// - Parameter key: The key identifying the store to fetch the item from.
-    /// - Returns: The fetched item as `Any`. The exact type depends on the store implementation.
-    /// - Throws: An error if the store is not found or if the fetch operation fails.
+    /// - Parameters:
+    ///   - key: The key identifying the store to fetch the item from.
+    /// - Returns:
+    ///   - The fetched item as `Any`. The exact type depends on the store implementation.
+    /// - Throws:
+    ///   - An error if the store is not found or if the fetch operation fails.
     ///
     /// - Note: The return type is `Any`, so callers are responsible for casting it to the expected type.
-    func item(fromStoreForKey key: StoreType) async throws -> Any
+    func item(fromStoreForKey key: any StoreType) async throws -> Any
     
     /// Fetches a paginated list of items from the store associated with the given key.
     ///
@@ -35,18 +38,21 @@ public protocol StoreRegistry {
     ///   - key: The key identifying the store to fetch the items from.
     ///   - offset: The starting point for pagination (used to fetch a subset of items).
     ///   - limit: The maximum number of items to return.
-    /// - Returns: A list of fetched items as `[Any]`. The exact type of each item depends on the store implementation.
-    /// - Throws: An error if the store is not found or if the fetch operation fails.
+    /// - Returns: 
+    ///   - A list of fetched items as `[Any]`. The exact type of each item depends on the store implementation.
+    /// - Throws:
+    ///   - An error if the store is not found or if the fetch operation fails.
     ///
     /// - Note: The return type is `[Any]`, so callers are responsible for casting the items to the expected type.
-    func items(fromStoreForKey key: StoreType, offset: Int, limit: Int) async throws -> [Any]
+    func items(fromStoreForKey key: any StoreType, offset: Int, limit: Int) async throws -> [Any]
     
     /// Provides a stream of items from the store associated with the given key.
     ///
-    /// - Parameter key: The key identifying the store to stream items from.
-    /// - Returns: An `AsyncThrowingStream` that produces items as `Any`. The exact type of each item depends on the store implementation.
-    ///            Returns `nil` if the store does not support streaming or is not found.
+    /// - Parameters:
+    ///   - key: The key identifying the store to stream items from.
+    /// - Returns:
+    ///   - An `AsyncThrowingStream` that produces items as `Any`. The exact type of each item depends on the store implementation. 
     ///
     /// - Note: The returned stream emits items of type `Any`. Callers are responsible for casting the items to the expected type.
-    func stream(forStoreKey key: StoreType) -> AsyncThrowingStream<Any, Error>
+    func stream(forStoreKey key: any StoreType) -> AsyncThrowingStream<Any, Error>
 }

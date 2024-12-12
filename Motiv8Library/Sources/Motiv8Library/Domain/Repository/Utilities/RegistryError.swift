@@ -12,7 +12,6 @@ import Foundation
 /// Errors that can occur during data fetching in the repository.
 enum RegistryError: Error, CustomStringConvertible, Equatable {
     case invalidData
-    
     case storeNotFound
     
     /// Description of the error.

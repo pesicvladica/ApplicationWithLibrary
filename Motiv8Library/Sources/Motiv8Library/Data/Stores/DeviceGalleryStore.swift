@@ -13,7 +13,7 @@ class DeviceGalleryStore: ListStore {
     
     // MARK: Properties
     
-    private(set) var storeKey: StoreType
+    private(set) var storeKey: any StoreType
     
     private let mediaType: PHAssetMediaType
     private let permissionManager: Permission
@@ -27,14 +27,15 @@ class DeviceGalleryStore: ListStore {
     /// - Parameters:
     ///    - mediaType: The type of media to fetch (`.image` or `.video`).
     ///    - permissionManager: An object conforming to `PermissionProtocol` for handling permission requests.
-    ///    - phAsset: The class used to fetch and manage photo assets.
-    ///    - phAssetResource: The class used to fetch file size of assets.
+    ///    - phAsset: An object conforming to `PHAssetProtocol` used to fetch and manage photo assets.
+    ///    - phAssetResource: An object conforming to `PHAssetResourceProtocol` fetch file size of assets.
+    ///    
     init(mediaType: PHAssetMediaType,
          permissionManager: Permission,
          phAsset: PHAssetProtocol.Type,
          phAssetResource: PHAssetResourceProtocol.Type) {
         
-        self.storeKey = mediaType == .image ? StoreType.image : StoreType.video
+        self.storeKey = mediaType == .image ? InternalType.image : InternalType.video
         self.mediaType = mediaType
         self.permissionManager = permissionManager
         self.phAsset = phAsset
@@ -84,7 +85,9 @@ class DeviceGalleryStore: ListStore {
     /// - Parameters:
     ///   - offset: The starting index for fetching items.
     ///   - limit: The maximum number of items to fetch.
-    /// - Returns: List of items fetched from gallery.
+    ///
+    /// - Returns:
+    ///   - Asynchronously returns array of items fetched from gallery.
     func fetchList(offset: Int = 0, limit: Int = 0) async throws -> [Any] {
         try await self.permissionManager.requestPermission()
         
@@ -104,7 +107,9 @@ class DeviceGalleryStore: ListStore {
                 let identifier = asset.localIdentifier
                 let description = asset.description
                 let dateCreated = asset.creationDate ?? Date.distantPast
-                let fileSize = self.phAssetResource.assetResources(for: asset).first?.value(forKey: "fileSize") as? Int64 ?? 0
+                let fileSize = self.phAssetResource.assetResources(for: asset).compactMap {
+                    $0.value(forKey: "fileSize") as? Int64
+                }.first ?? 0
                 let dimension = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
                 let duration = asset.duration
                 

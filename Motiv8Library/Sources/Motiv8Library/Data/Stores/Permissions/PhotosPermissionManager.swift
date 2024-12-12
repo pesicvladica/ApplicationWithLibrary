@@ -8,11 +8,10 @@
 import Foundation
 import Photos
 
-// MARK: - Utility for Gallery Permissions
-
-/// A class that manages permission request for accessing the photo library.
+/// A permission manager for handling photo library access.
 class PhotosPermissionManager: Permission {
     
+    /// Requests authorization for photo library access.
     private func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
         await withCheckedContinuation { continuation in
             let status = PHPhotoLibrary.authorizationStatus()
@@ -33,17 +32,13 @@ class PhotosPermissionManager: Permission {
 
         switch status {
         case .authorized, .limited:
-            debugPrint("ALLOWED")
             return
         case .denied, .restricted:
-            debugPrint("DENIED")
             throw StoreError.accessDenied("Access to photo library was denied.")
         case .notDetermined:
             /// This should not happen since in request we check if state is not determined and request acces if needed
-            debugPrint("NOT DETERMINED!")
             return
         @unknown default:
-            debugPrint("UNKNOWN")
             throw StoreError.accessDenied("Unexpected authorization status.")
         }
     }

@@ -7,24 +7,13 @@
 
 import Foundation
 
-public enum StoreType: Hashable, CaseIterable {
+/// Protocol representing a store type, which categorizes the kind of data the store provides.
+public protocol StoreType: Hashable, CaseIterable {}
+
+/// Enum defining the internal types of stores supported by the library.
+public enum InternalType: StoreType {
     case contact
     case image
     case video
     case deviceInfo
-    
-    public enum StoreProvider {
-        case item
-        case list
-        case stream
-    }
-    
-    func isProviding() -> StoreProvider {
-        switch self {
-        case .contact, .image, .video:
-            return .list
-        case .deviceInfo:
-            return .item
-        }
-    }
 }

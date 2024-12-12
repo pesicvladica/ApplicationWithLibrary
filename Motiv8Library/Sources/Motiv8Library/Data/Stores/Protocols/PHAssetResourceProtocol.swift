@@ -8,7 +8,9 @@
 import Foundation
 import Photos
 
+/// Protocol for accessing metadata about photo asset resources.
 public protocol PHAssetResourceProtocol {
+    /// Returns the resources associated with a given asset.
     static func assetResources(for asset: PHAsset) -> [PHAssetResource]
 }
 

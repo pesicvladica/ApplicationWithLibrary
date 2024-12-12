@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Custom Error Type
 
-/// Represents errors that can occur within the data stores.
+/// Errors that can occur during store operations.
 enum StoreError: Error, LocalizedError, Equatable {
     case accessDenied(String)
     case fetchFailed(String)

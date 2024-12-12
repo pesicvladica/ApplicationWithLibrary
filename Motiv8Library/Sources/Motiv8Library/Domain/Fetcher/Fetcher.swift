@@ -7,36 +7,36 @@
 
 import Foundation
 
-/// Base class for use cases interacting with repositories.
+/// A generic fetcher for retrieving items or lists of items from a store.
+/// - Note: This class supports fetching individual items, paginated lists, and recursive list fetching.
 public class Fetcher<T>: ItemFetcher, ListFetcher {
     public typealias I = T
     
     // MARK: Properties
     
-    private let storeType: StoreType
+    private let storeType: any StoreType
     
     public let registry: StoreRegistry
     
     // MARK: Initialization
     
-    /// Initializes the use case with a specified repository.
+    /// Initializes a fetcher with the given registry and store type.
     ///
-    /// This initializer sets up the `UseCase` with a repository that handles data fetching. The repository is used
-    /// by the use case to fetch the required data from various stores. The use case can be expanded to include business
-    /// logic or other operations in addition to data retrieval.
+    /// - Parameters:
+    ///   - registry: The store registry for fetching data.
+    ///   - storeType: The type of store to fetch data from.
     ///
-    /// - Parameter repository: The repository responsible for fetching data.
-    init(registry: StoreRegistry, storeType: StoreType) {
+    init(registry: StoreRegistry, storeType: any StoreType) {
         self.storeType = storeType
         self.registry = registry
     }
     
+    /// Fetches a single item from the associated store.
+    ///
+    /// - Parameters:
+    ///   - onCompletion: A completion handler called with the result of the fetch operation.
+    ///
     public func getItem(_ onCompletion: @escaping (Result<T, Error>) -> Void) {
-        if storeType.isProviding() != .item {
-            onCompletion(.failure(FetcherError.custom(message: "Fetcher does not implement single item fetching")))
-            return
-        }
-        
         Task.detached { [weak self] in
             guard let self = self else {
                 await MainActor.run {
@@ -65,12 +65,12 @@ public class Fetcher<T>: ItemFetcher, ListFetcher {
         }
     }
     
+    /// Fetches all items from the associated store using recursive pagination.
+    ///
+    /// - Parameters:
+    ///   - onCompletion: A completion handler called with the result of the fetch operation.
+    ///
     public func getItems(_ onCompletion: @escaping (Result<[T], Error>) -> Void) {
-        if storeType.isProviding() != .list {
-            onCompletion(.failure(FetcherError.custom(message: "Fetcher does not implement list fetching")))
-            return
-        }
-        
         Task.detached { [weak self] in
             guard let self = self else {
                 await MainActor.run {
@@ -109,12 +109,14 @@ public class Fetcher<T>: ItemFetcher, ListFetcher {
         }
     }
     
+    /// Fetches a paginated list of items from the associated store.
+    /// 
+    /// - Parameters:
+    ///   - offset: The starting index for the fetch.
+    ///   - limit: The maximum number of items to fetch.
+    ///   - onCompletion: A completion handler called with the result of the fetch operation.
+    ///
     public func getItems(at offset: Int, with limit: Int, _ onCompletion: @escaping (Result<[T], Error>) -> Void) {
-        if storeType.isProviding() != .list {
-            onCompletion(.failure(FetcherError.custom(message: "Fetcher does not implement list fetching")))
-            return
-        }
-        
         Task.detached { [weak self] in
             guard let self = self else {
                 await MainActor.run {

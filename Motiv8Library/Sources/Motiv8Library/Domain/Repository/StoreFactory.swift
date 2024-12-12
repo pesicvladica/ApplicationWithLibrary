@@ -7,6 +7,13 @@
 
 import Foundation
 
-protocol StoreFactory {
-    func createStore(for type: StoreType) -> any Store
+/// A protocol for defining a factory that creates store instances.
+public protocol StoreFactory {
+    
+    /// Creates a store for the specified type.
+    /// - Parameters:
+    ///   - type: The type of the store to create.
+    /// - Returns:
+    ///   - A store instance conforming to the `Store` protocol.
+    func createStore(for type: any StoreType) -> any Store
 }

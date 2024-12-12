@@ -9,6 +9,6 @@ import Foundation
 
 /// Protocol for managing permission requests. Each class conforming to this protocol must implement the `requestPermission` method to handle permission requests.
 public protocol Permission {
-    /// Requests permission for a resource
+    /// Requests permission asynchronously.
     func requestPermission() async throws
 }

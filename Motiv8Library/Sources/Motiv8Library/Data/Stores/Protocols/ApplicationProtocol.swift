@@ -8,7 +8,9 @@
 import Foundation
 import UIKit
 
+/// Protocol for accessing application-level properties.
 public protocol ApplicationProtocol {
+    /// The connected scenes in the application.
     var connectedScenes: Set<UIScene> { get }
 }
 

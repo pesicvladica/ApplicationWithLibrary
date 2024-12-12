@@ -13,7 +13,7 @@ class DeviceInfoStore: ItemStore {
 
     // MARK: Properties
     
-    private(set) var storeKey: StoreType
+    private(set) var storeKey: any StoreType
     
     private let device: DeviceProtocol
     private let application: ApplicationProtocol
@@ -25,9 +25,10 @@ class DeviceInfoStore: ItemStore {
     /// - Parameters:
     ///    - device: An instance of `DeviceProtocol` used to fetch the device information.
     ///    - application: An instance of `ApplicationProtocol` used to fetch the screen information.
+    ///
     init(device: DeviceProtocol, application: ApplicationProtocol) {
         
-        self.storeKey = StoreType.deviceInfo
+        self.storeKey = InternalType.deviceInfo
         self.device = device
         self.application = application
     }
@@ -41,8 +42,6 @@ class DeviceInfoStore: ItemStore {
     ///
     /// - Returns:
     ///    - DeviceItem object containg device specific data
-    ///
-    /// - Note: This method retrieves data from `UIDevice` and `UIApplication` to generate the device information.
     func fetchItem() async throws -> Any  {
         let identifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
         let systemName = device.systemName

@@ -8,10 +8,13 @@
 import Foundation
 import Contacts
 
+/// Protocol for accessing contact store operations.
 public protocol ContactStoreProtocol {
-    func requestAccess(for entityType: CNEntityType, 
+    /// Requests access for a specific entity type.
+    func requestAccess(for entityType: CNEntityType,
                        completionHandler: @escaping (Bool, Error?) -> Void)
-    func enumerateContacts(with fetchRequest: CNContactFetchRequest, 
+    /// Enumerates contacts based on a fetch request.
+    func enumerateContacts(with fetchRequest: CNContactFetchRequest,
                            usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) throws
 }
 
