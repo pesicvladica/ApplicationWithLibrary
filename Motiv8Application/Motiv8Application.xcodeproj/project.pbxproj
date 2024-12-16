@@ -31,24 +31,24 @@
 		6E2F54912D030AFC00D2D75E /* AnaliticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F54902D030AFC00D2D75E /* AnaliticsView.swift */; };
 		6E2F54932D030B0D00D2D75E /* AnaliticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F54922D030B0D00D2D75E /* AnaliticsViewController.swift */; };
 		6E2F54952D0312A100D2D75E /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F54942D0312A100D2D75E /* SpinnerView.swift */; };
+		6E794CFD2D1063B0004D8FCF /* DeviceInternalsLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 6E794CFC2D1063B0004D8FCF /* DeviceInternalsLibrary */; };
 		6EBB2F6B2D0048AC0001DE64 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB2F6A2D0048AC0001DE64 /* AppDelegate.swift */; };
 		6EBB2F6D2D0048AC0001DE64 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB2F6C2D0048AC0001DE64 /* SceneDelegate.swift */; };
 		6EBB2F6F2D0048AC0001DE64 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB2F6E2D0048AC0001DE64 /* MainViewController.swift */; };
 		6EBB2F742D0048AF0001DE64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EBB2F732D0048AF0001DE64 /* Assets.xcassets */; };
 		6EBB2F772D0048AF0001DE64 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EBB2F752D0048AF0001DE64 /* LaunchScreen.storyboard */; };
 		6EBB2F8C2D0048AF0001DE64 /* Motiv8ApplicationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB2F8B2D0048AF0001DE64 /* Motiv8ApplicationUITests.swift */; };
-		6EBB2F9C2D004AD10001DE64 /* Motiv8Library in Frameworks */ = {isa = PBXBuildFile; productRef = 6EBB2F9B2D004AD10001DE64 /* Motiv8Library */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6EBB2F7E2D0048AF0001DE64 /* PBXContainerItemProxy */ = {
+		6E794CFE2D1063E6004D8FCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EBB2F5F2D0048AC0001DE64 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 6EBB2F662D0048AC0001DE64;
 			remoteInfo = Motiv8Application;
 		};
-		6EBB2F882D0048AF0001DE64 /* PBXContainerItemProxy */ = {
+		6EBB2F7E2D0048AF0001DE64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EBB2F5F2D0048AC0001DE64 /* Project object */;
 			proxyType = 1;
@@ -99,7 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EBB2F9C2D004AD10001DE64 /* Motiv8Library in Frameworks */,
+				6E794CFD2D1063B0004D8FCF /* DeviceInternalsLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +289,7 @@
 			);
 			name = Motiv8Application;
 			packageProductDependencies = (
-				6EBB2F9B2D004AD10001DE64 /* Motiv8Library */,
+				6E794CFC2D1063B0004D8FCF /* DeviceInternalsLibrary */,
 			);
 			productName = Motiv8Application;
 			productReference = 6EBB2F672D0048AC0001DE64 /* Motiv8Application.app */;
@@ -324,7 +324,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				6EBB2F892D0048AF0001DE64 /* PBXTargetDependency */,
+				6E794CFF2D1063E6004D8FCF /* PBXTargetDependency */,
 			);
 			name = Motiv8ApplicationUITests;
 			productName = Motiv8ApplicationUITests;
@@ -364,7 +364,7 @@
 			);
 			mainGroup = 6EBB2F5E2D0048AC0001DE64;
 			packageReferences = (
-				6EBB2F9A2D004AD10001DE64 /* XCLocalSwiftPackageReference "../Motiv8Library" */,
+				6E794CFB2D106252004D8FCF /* XCLocalSwiftPackageReference "../DeviceInternalsLibrary" */,
 			);
 			productRefGroup = 6EBB2F682D0048AC0001DE64 /* Products */;
 			projectDirPath = "";
@@ -456,15 +456,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E794CFF2D1063E6004D8FCF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EBB2F662D0048AC0001DE64 /* Motiv8Application */;
+			targetProxy = 6E794CFE2D1063E6004D8FCF /* PBXContainerItemProxy */;
+		};
 		6EBB2F7F2D0048AF0001DE64 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EBB2F662D0048AC0001DE64 /* Motiv8Application */;
 			targetProxy = 6EBB2F7E2D0048AF0001DE64 /* PBXContainerItemProxy */;
-		};
-		6EBB2F892D0048AF0001DE64 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6EBB2F662D0048AC0001DE64 /* Motiv8Application */;
-			targetProxy = 6EBB2F882D0048AF0001DE64 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -771,16 +771,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		6EBB2F9A2D004AD10001DE64 /* XCLocalSwiftPackageReference "../Motiv8Library" */ = {
+		6E794CFB2D106252004D8FCF /* XCLocalSwiftPackageReference "../DeviceInternalsLibrary" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Motiv8Library;
+			relativePath = ../DeviceInternalsLibrary;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6EBB2F9B2D004AD10001DE64 /* Motiv8Library */ = {
+		6E794CFC2D1063B0004D8FCF /* DeviceInternalsLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Motiv8Library;
+			productName = DeviceInternalsLibrary;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

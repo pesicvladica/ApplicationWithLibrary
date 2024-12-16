@@ -6,10 +6,12 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 // Mock for ContactsListFetcherProtocol
-class MockVideoListFetcher: VideosListFetcherProtocol {
+class MockVideoListFetcher: ListFetcher {
+    typealias I = VideoItem
+    
     
     var resultToReturn: Result<[VideoItem], Error>?
     var resetCalled = false

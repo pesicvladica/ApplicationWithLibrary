@@ -5,6 +5,6 @@
       location = "group:Motiv8Application/Motiv8Application.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Motiv8Library">
+      location = "group:DeviceInternalsLibrary">
    </FileRef>
 </Workspace>

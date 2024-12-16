@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "DE43A37C-011A-4843-B042-C9ECA05A7FCD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:DeviceInternalsLibrary",
+        "identifier" : "DeviceInternalsLibraryTests",
+        "name" : "DeviceInternalsLibraryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

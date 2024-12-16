@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import Motiv8Library
+import DeviceInternalsLibrary
 @testable import Motiv8Application
 
 final class ContactsViewModelTests: XCTestCase {

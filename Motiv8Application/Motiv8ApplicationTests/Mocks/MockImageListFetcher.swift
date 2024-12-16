@@ -6,10 +6,11 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 // Mock for ContactsListFetcherProtocol
-class MockImageListFetcher: ImagesListFetcherProtocol {
+class MockImageListFetcher: ListFetcher {    
+    typealias I = ImageItem
     
     var resultToReturn: Result<[ImageItem], Error>?
     var resetCalled = false

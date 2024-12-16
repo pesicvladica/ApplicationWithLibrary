@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 class AnaliticsViewModel {
     
     // MARK: Private properties
     
-    private let motivateLibrary: Motiv8Library
+    private let motivateLibrary: DeviceInternalsLibrary
     private let maxEntries = 15
     
     // MARK: Public properties
@@ -21,7 +21,7 @@ class AnaliticsViewModel {
     
     // MARK: Initialization
     
-    init(motivateLibrary: Motiv8Library) {
+    init(motivateLibrary: DeviceInternalsLibrary) {
         self.motivateLibrary = motivateLibrary
     }
     

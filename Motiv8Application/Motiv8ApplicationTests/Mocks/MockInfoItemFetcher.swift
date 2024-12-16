@@ -6,10 +6,12 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 // Mock for InfoItemFetcherProtocol
-class MockInfoItemFetcher: InfoItemFetcherProtocol {
+class MockInfoItemFetcher: ItemFetcher {
+    typealias I = DeviceItem
+    
 
     var resultToReturn: Result<DeviceItem, Error>?
     

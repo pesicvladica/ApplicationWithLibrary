@@ -6,10 +6,12 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 // Mock for ContactsListFetcherProtocol
-class MockContactsListFetcher: ContactsListFetcherProtocol {
+class MockContactsListFetcher: ListFetcher {
+    typealias I = ContactItem
+    
     
     var resultToReturn: Result<[ContactItem], Error>?
     var resetCalled = false

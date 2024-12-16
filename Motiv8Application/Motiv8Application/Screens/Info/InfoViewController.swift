@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Motiv8Library
+import DeviceInternalsLibrary
 
 class InfoViewController: UIViewController {
 

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Motiv8Library
+import DeviceInternalsLibrary
 
 class ImagesViewModel: ListViewModelProtocol {
     
