@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 /// A model representing a device with specifications like OS version and screen resolution.
 public struct DeviceItem: Item {
@@ -16,7 +17,7 @@ public struct DeviceItem: Item {
     public var manufacturer: String
     public var screenResolution: CGSize
     
-    init(id: String = "", title: String = "", osVersion: String = "", manufacturer: String = "", screenResolution: CGSize = .zero) {
+    public init(id: String = "", title: String = "", osVersion: String = "", manufacturer: String = "", screenResolution: CGSize = CGSize.zero) {
         self.id = id
         self.title = title
         self.osVersion = osVersion

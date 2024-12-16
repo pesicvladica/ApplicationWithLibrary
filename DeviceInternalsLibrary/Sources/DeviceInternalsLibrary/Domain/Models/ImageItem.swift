@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 /// A model representing an image with metadata such as dimensions and file size.
 public struct ImageItem: MediaItem {
@@ -17,7 +18,7 @@ public struct ImageItem: MediaItem {
     
     public var dimension: CGSize
     
-    init(id: String = "", title: String = "", dateCreated: Date = .distantPast, byteFileSize: Int64 = 0, dimension: CGSize = .zero) {
+    public init(id: String = "", title: String = "", dateCreated: Date = .distantPast, byteFileSize: Int64 = 0, dimension: CGSize = CGSize.zero) {
         self.id = id
         self.title = title
         self.dateCreated = dateCreated
