@@ -1,5 +1,5 @@
 //
-//  FetchingContactsRepository.swift
+//  DeviceGalleryStore.swift
 //  
 //
 //  Created by Vladica Pesic on 12/4/24.

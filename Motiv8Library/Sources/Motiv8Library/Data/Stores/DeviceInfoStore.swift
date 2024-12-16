@@ -16,7 +16,7 @@ class DeviceInfoStore: ItemStore {
     private(set) var storeKey: any StoreType
     
     private let device: DeviceProtocol
-    private let application: ApplicationProtocol
+    private let windowScene: WindowSceneProtocol?
     
     // MARK: Initialization
     
@@ -24,13 +24,13 @@ class DeviceInfoStore: ItemStore {
     ///
     /// - Parameters:
     ///    - device: An instance of `DeviceProtocol` used to fetch the device information.
-    ///    - application: An instance of `ApplicationProtocol` used to fetch the screen information.
+    ///    - windowScene: An instance of `WindowSceneProtocol` used to fetch the screen information.
     ///
-    init(device: DeviceProtocol, application: ApplicationProtocol) {
+    init(device: DeviceProtocol, windowScene: WindowSceneProtocol?) {
         
         self.storeKey = InternalType.deviceInfo
         self.device = device
-        self.application = application
+        self.windowScene = windowScene
     }
     
     // MARK: Store methods
@@ -42,12 +42,12 @@ class DeviceInfoStore: ItemStore {
     ///
     /// - Returns:
     ///    - DeviceItem object containg device specific data
+    @MainActor
     func fetchItem() async throws -> Any  {
         let identifierForVendor = device.identifierForVendor?.uuidString ?? "N/A"
         let systemName = device.systemName
         let systemVersion = device.systemVersion
-        let screen = application.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
-        let screenSize = await screen?.windows.first?.frame.size ?? CGSize.zero
+        let screenSize = windowScene?.windows.first?.frame.size ?? CGSize.zero
         
         let deviceItem = DeviceItem(id: identifierForVendor,
                                     title: systemName,

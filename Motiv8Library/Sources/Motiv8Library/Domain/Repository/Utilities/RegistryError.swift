@@ -1,5 +1,5 @@
 //
-//  RepositoryError.swift
+//  RegistryError.swift
 //
 //
 //  Created by Vladica Pesic on 12/10/24.

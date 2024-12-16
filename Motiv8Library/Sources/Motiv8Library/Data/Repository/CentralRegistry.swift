@@ -1,5 +1,5 @@
 //
-//  CentralRepository.swift
+//  CentralRegistry.swift
 //
 //
 //  Created by Vladica Pesic on 12/5/24.
@@ -35,16 +35,16 @@ final class CentralRegistry: StoreRegistry {
     ///   - A store instance conforming to the `Store` protocol.
     /// - Precondition:
     ///   - The provided `key` must be an `InternalType`.
-    private func getStore(for key: any StoreType) -> any Store {
+    private func getStore(for key: any StoreType) throws -> any Store {
         guard let internalKey = key as? InternalType else {
-            preconditionFailure("Only Internal type is allowed in central registry")
+            throw RegistryError.storeNotFound
         }
         
         if let registeredStore = registeredStores[internalKey], let store = registeredStore {
             return store
         }
         
-        let storeToRegister = storeFactory.createStore(for: internalKey)
+        let storeToRegister = try storeFactory.createStore(for: internalKey)
         registeredStores[internalKey] = storeToRegister
         return storeToRegister
     }
@@ -56,9 +56,9 @@ final class CentralRegistry: StoreRegistry {
     ///   - stores: An array of store types to register.
     /// - Precondition:
     ///   - All provided `stores` must be of type `InternalType`.
-    func registerStores(_ stores: [any StoreType]) {
+    func registerStores(_ stores: [any StoreType]) throws {
         guard let internalStores = stores as? [InternalType] else {
-            preconditionFailure("Only Internal type is allowed in central registry")
+            throw RegistryError.storeNotFound
         }
         
         for store in internalStores {
@@ -76,7 +76,7 @@ final class CentralRegistry: StoreRegistry {
     /// - Throws:
     ///   - `RegistryError.storeNotFound` if the store is not found.
     func item(fromStoreForKey key: any StoreType) async throws -> Any {
-        guard let store = getStore(for: key) as? ItemStore else {
+        guard let store = try getStore(for: key) as? ItemStore else {
             throw RegistryError.storeNotFound
         }
         return try await store.fetchItem()
@@ -92,7 +92,7 @@ final class CentralRegistry: StoreRegistry {
     /// - Throws:
     ///   - `RegistryError.storeNotFound` if the store is not found.
     func items(fromStoreForKey key: any StoreType, offset: Int, limit: Int) async throws -> [Any] {
-        guard let store = getStore(for: key) as? ListStore else {
+        guard let store = try getStore(for: key) as? ListStore else {
             throw RegistryError.storeNotFound
         }
         guard limit > 0 else {
@@ -101,17 +101,16 @@ final class CentralRegistry: StoreRegistry {
         return try await store.fetchList(offset: offset, limit: limit)
     }
     
+    // TODO: Implement stream functionality in future
+    ///
     /// Returns a stream of items from a store.
     /// - Parameters :
     ///   - key: The key identifying the store.
     /// - Returns:
     ///   - An asynchronous stream of items from the store.
     func stream(forStoreKey key: any StoreType) -> AsyncThrowingStream<Any, Error> {
-        guard let store = getStore(for: key) as? StreamStore else {
-            return AsyncThrowingStream { continuation in
-                continuation.finish(throwing: RegistryError.storeNotFound)
-            }
+        return AsyncThrowingStream { continuation in
+            continuation.finish(throwing: RegistryError.storeNotFound)
         }
-        return store.stream()
     }
 }

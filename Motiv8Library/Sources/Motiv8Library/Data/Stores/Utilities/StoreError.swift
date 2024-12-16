@@ -13,6 +13,7 @@ import Foundation
 enum StoreError: Error, LocalizedError, Equatable {
     case accessDenied(String)
     case fetchFailed(String)
+    case storeNotFound(String)
 
     /// Custom error descriptions for each error case.
     public var errorDescription: String? {
@@ -21,6 +22,8 @@ enum StoreError: Error, LocalizedError, Equatable {
             return message // Message detailing why access was denied.
         case .fetchFailed(let message):
             return message // Message detailing why fetching failed.
+        case .storeNotFound(let message):
+            return message // Message detailing why store wasnt found
         }
     }
 }

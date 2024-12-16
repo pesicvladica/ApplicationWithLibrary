@@ -17,19 +17,11 @@ public struct ImageItem: MediaItem {
     
     public var dimension: CGSize
     
-    init(id: String, title: String, dateCreated: Date, byteFileSize: Int64, dimension: CGSize) {
+    init(id: String = "", title: String = "", dateCreated: Date = .distantPast, byteFileSize: Int64 = 0, dimension: CGSize = .zero) {
         self.id = id
         self.title = title
         self.dateCreated = dateCreated
         self.byteFileSize = byteFileSize
         self.dimension = dimension
-    }
-    
-    public init() {
-        self.id = ""
-        self.title = ""
-        self.dateCreated = Date.distantPast
-        self.byteFileSize = 0
-        self.dimension = .zero
     }
 }

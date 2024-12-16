@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Fetcher.swift
 //  
 //
 //  Created by Vladica Pesic on 12/5/24.
@@ -15,8 +15,7 @@ public class Fetcher<T>: ItemFetcher, ListFetcher {
     // MARK: Properties
     
     private let storeType: any StoreType
-    
-    public let registry: StoreRegistry
+    private let registry: StoreRegistry
     
     // MARK: Initialization
     

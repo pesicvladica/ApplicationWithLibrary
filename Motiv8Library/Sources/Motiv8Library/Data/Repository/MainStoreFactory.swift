@@ -20,9 +20,9 @@ final class MainStoreFactory: StoreFactory {
     ///   - A store instance conforming to the `Store` protocol.
     /// - Precondition :
     ///   - The provided `type` must be an `InternalType`.
-    func createStore(for type: any StoreType) -> any Store {
+    func createStore(for type: any StoreType) throws -> any Store {
         guard let internalType = type as? InternalType else {
-            preconditionFailure("In main store factory only internal types are supported")
+            throw StoreError.storeNotFound("Main store factory only supports Internal types")
         }
         
         switch internalType {
@@ -44,9 +44,10 @@ final class MainStoreFactory: StoreFactory {
                                       phAssetResource: phAssetResource)
         case .deviceInfo:
             let device = UIDevice.current
-            let application = UIApplication.shared
-            return DeviceInfoStore(device: device, 
-                                   application: application)
+            let windowScene = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
+
+            return DeviceInfoStore(device: device,
+                                   windowScene: windowScene)
         }
     }
 }

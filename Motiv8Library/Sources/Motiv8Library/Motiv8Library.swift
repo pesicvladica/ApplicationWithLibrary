@@ -62,7 +62,12 @@ public class Motiv8Library {
     public static func createDefaultLibrary() -> Motiv8Library {
         let storeFactory = MainStoreFactory()
         let registry = CentralRegistry(storeFactory: storeFactory)
-        registry.registerStores(InternalType.allCases)
+        do {
+            try registry.registerStores(InternalType.allCases)
+        }
+        catch {
+            preconditionFailure("In this scenario registering stores can not fail \(error)")
+        }
         return Motiv8Library(registry: registry)
     }
     
@@ -78,7 +83,12 @@ public class Motiv8Library {
     public static func createLibraryWith(stores: [InternalType]) -> Motiv8Library {
         let storeFactory = MainStoreFactory()
         let registry = CentralRegistry(storeFactory: storeFactory)
-        registry.registerStores(stores)
+        do {
+            try registry.registerStores(stores)
+        }
+        catch {
+            preconditionFailure("In this scenario registering stores can not fail \(error)")
+        }
         return Motiv8Library(registry: registry)
     }
 }

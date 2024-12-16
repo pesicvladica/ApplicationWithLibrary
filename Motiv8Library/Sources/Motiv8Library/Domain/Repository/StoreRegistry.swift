@@ -1,5 +1,5 @@
 //
-//  FetchingRepository.swift
+//  StoreRegistry.swift
 //  
 //
 //  Created by Vladica Pesic on 12/4/24.
@@ -16,9 +16,11 @@ public protocol StoreRegistry {
     ///
     /// - Parameters:
     ///   - stores: The stores to register. Available stores are defined in StoreType enum
+    /// - Throws:
+    ///   - An error if the store is not found 
     ///
-    /// - Note: Registering a store which was already registred will overwrite the previous store.
-    func registerStores(_ stores: [any StoreType])
+    /// - Note: Registering a store which was already registred will not overwrite the previous store.
+    func registerStores(_ stores: [any StoreType]) throws
     
     /// Fetches a single item from the store associated with the given key.
     ///

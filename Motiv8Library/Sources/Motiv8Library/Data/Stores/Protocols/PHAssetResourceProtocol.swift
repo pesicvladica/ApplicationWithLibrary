@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PHAssetResourceProtocol.swift
 //  
 //
 //  Created by Vladica Pesic on 12/11/24.

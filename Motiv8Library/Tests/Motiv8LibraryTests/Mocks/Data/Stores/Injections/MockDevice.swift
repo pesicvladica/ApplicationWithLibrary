@@ -1,27 +1,24 @@
 //
-//  MockDeviceInfo.swift
+//  MockDevice.swift
 //
 //
-//  Created by Vladica Pesic on 12/4/24.
+//  Created by Vladica Pesic on 12/13/24.
 //
 
 import Foundation
-import UIKit
 @testable import Motiv8Library
 
-// MARK: - Mock Implementations
-
-// Mock for UIDevice
-class MockUIDevice: UIDevice {
-    override var identifierForVendor: UUID? {
+class MockDevice: DeviceProtocol {
+    
+    var identifierForVendor: UUID? {
         return mockIdentifierForVendor
     }
     
-    override var systemName: String {
+    var systemName: String {
         return mockSystemName
     }
     
-    override var systemVersion: String {
+    var systemVersion: String {
         return mockSystemVersion
     }
     
@@ -29,10 +26,9 @@ class MockUIDevice: UIDevice {
     private var mockSystemName: String
     private var mockSystemVersion: String
     
-    init(identifierForVendor: UUID? = nil, systemName: String = "iOS", systemVersion: String = "14.0") {
+    init(identifierForVendor: UUID?, systemName: String, systemVersion: String) {
         self.mockIdentifierForVendor = identifierForVendor
         self.mockSystemName = systemName
         self.mockSystemVersion = systemVersion
-        super.init()
     }
 }

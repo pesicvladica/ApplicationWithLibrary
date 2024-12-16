@@ -15,5 +15,8 @@ public protocol StoreFactory {
     ///   - type: The type of the store to create.
     /// - Returns:
     ///   - A store instance conforming to the `Store` protocol.
-    func createStore(for type: any StoreType) -> any Store
+    /// - Throws:
+    ///   - An error if the store is not found
+    ///   
+    func createStore(for type: any StoreType) throws -> any Store
 }

@@ -10,74 +10,64 @@ import XCTest
 
 class DeviceInfoStoreTests: XCTestCase {
 
-    var mockUIDevice: MockUIDevice!
+    var mockDevice: MockDevice!
+    var mockWindowScene: MockWindowScene!
     var sut: DeviceInfoStore!
     
     override func setUp() {
         super.setUp()
         
         // Initialize mocks
-        mockUIDevice = MockUIDevice(identifierForVendor: UUID(uuidString: "12345678-1234-1234-1234-1234567890AB"), 
-                                    systemName: "iOS",
-                                    systemVersion: "14.1")
+        mockDevice = MockDevice(identifierForVendor: UUID(uuidString: "12345678-1234-1234-1234-1234567890AB"), systemName: "iOS", systemVersion: "14.1")
+        mockWindowScene = MockWindowScene(withoutWindow: false)
         
         // Initialize DeviceInfoStore with mock UIDevice
-        sut = DeviceInfoStore(device: mockUIDevice)
+        sut = DeviceInfoStore(device: mockDevice, windowScene: mockWindowScene)
     }
     
     override func tearDown() {
-        mockUIDevice = nil
+        mockDevice = nil
+        mockWindowScene = nil
         sut = nil
         super.tearDown()
     }
+    
+    func testDeviceInfoStore_OnInitStoreKey_IsInternalDeviceInfo() {
+        // Assert
+        XCTAssertEqual(sut.storeKey as? InternalType, InternalType.deviceInfo, "Store key should be set to device info")
+    }
 
-    func testDeviceInfoStore_OnFetch_Success() {
+    func testDeviceInfoStore_OnFetch_Success() async throws {
         // Arrange
         let expectedIdentifier = "12345678-1234-1234-1234-1234567890AB"
         let expectedSystemName = "iOS"
         let expectedSystemVersion = "14.1"
-
-        let expectation = self.expectation(description: #function)
         
-        // Act
-        sut.fetchItem { result in
-            switch result {
-            case .success(let deviceItem):
-                // Assert
-                XCTAssertEqual(deviceItem.id, expectedIdentifier, "Provided id shoudl match")
-                XCTAssertEqual(deviceItem.title, expectedSystemName, "Provided system name should match")
-                XCTAssertEqual(deviceItem.osVersion, expectedSystemVersion, "Provided os version should match")
-                XCTAssertEqual(deviceItem.manufacturer, "Apple", "Manufacturers should match")
-            case .failure:
-                XCTFail("Expected success, but got failure.")
-            }
-            expectation.fulfill()
+        guard let deviceItem = try await sut.fetchItem() as? DeviceItem else {
+            XCTFail("Received item should be of type DeviceItem")
+            return
         }
         
-        wait(for: [expectation], timeout: 1)
+        // Assert
+        XCTAssertEqual(deviceItem.id, expectedIdentifier, "Provided id shoudl match")
+        XCTAssertEqual(deviceItem.title, expectedSystemName, "Provided system name should match")
+        XCTAssertEqual(deviceItem.osVersion, expectedSystemVersion, "Provided os version should match")
+        XCTAssertEqual(deviceItem.screenResolution, CGSize(width: 320, height: 480), "Should been default screensize")
     }
-
-    func testDeviceInfoStore_OnFetch_IdentifierForVendorNil() {
+    
+    func testDeviceInfoStore_OnFetch_OptionalsAreNil() async throws {
         // Arrange
-        mockUIDevice = MockUIDevice(identifierForVendor: nil, systemName: "iOS", systemVersion: "14.1")
-        sut = DeviceInfoStore(device: mockUIDevice)
+        let nilIdDevice = MockDevice(identifierForVendor: nil, systemName: "iOS", systemVersion: "14.1")
+        let nilSizeWindowScene = MockWindowScene(withoutWindow: true)
+        let nilsSut = DeviceInfoStore(device: nilIdDevice, windowScene: nilSizeWindowScene)
         
-        let expectedIdentifier = "N/A" // Expected value when identifierForVendor is nil
-        
-        let expectation = self.expectation(description: #function)
-        
-        // Act
-        sut.fetchItem { result in
-            switch result {
-            case .success(let deviceItem):
-                // Assert
-                XCTAssertEqual(deviceItem.id, expectedIdentifier, "Identifier should be undefined")
-            case .failure:
-                XCTFail("Expected success, but got failure.")
-            }
-            expectation.fulfill()
+        guard let deviceItem = try await nilsSut.fetchItem() as? DeviceItem else {
+            XCTFail("Received item should be of type DeviceItem")
+            return
         }
         
-        wait(for: [expectation], timeout: 1)
+        // Assert
+        XCTAssertEqual(deviceItem.id, "N/A", "Provided id shoudl match")
+        XCTAssertEqual(deviceItem.screenResolution, CGSize(width: 0, height: 0), "Screen size should have been zero")
     }
 }
