@@ -11,6 +11,9 @@ import Contacts
 
 class MockCNContactStore: ContactStoreProtocol {
     
+    var accessGranted: Bool = true
+    var accessError: StoreError?
+    
     var contactsToReturn: [CNContact] = []
 
     func generateContacts(_ count: Int = 1) {
@@ -26,8 +29,11 @@ class MockCNContactStore: ContactStoreProtocol {
     // MARK: ContactStoreProtocol
     
     func requestAccess(for entityType: CNEntityType, completionHandler: @escaping (Bool, Error?) -> Void) {
-        func requestAccess(for entityType: CNEntityType, completionHandler: @escaping (Bool, Error?) -> Void) {
-            completionHandler(false, StoreError.accessDenied("Wrong permission requested"))
+        if !accessGranted {
+            completionHandler(accessGranted, accessError)
+        }
+        else {
+            completionHandler(accessGranted, nil)
         }
     }
     

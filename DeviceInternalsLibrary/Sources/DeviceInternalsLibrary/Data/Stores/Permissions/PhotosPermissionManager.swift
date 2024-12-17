@@ -11,12 +11,17 @@ import Photos
 /// A permission manager for handling photo library access.
 class PhotosPermissionManager: Permission {
     
+    private var photoLibrary: PHPhotoLibraryProtocol.Type
+    init(photoLibrary: PHPhotoLibraryProtocol.Type) {
+        self.photoLibrary = photoLibrary
+    }
+    
     /// Requests authorization for photo library access.
     private func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
         await withCheckedContinuation { continuation in
-            let status = PHPhotoLibrary.authorizationStatus()
+            let status = photoLibrary.authorizationStatus()
             if status == .notDetermined {
-                PHPhotoLibrary.requestAuthorization(for: .readWrite) { requestStatus in
+                photoLibrary.requestAuthorization(for: .readWrite) { requestStatus in
                     continuation.resume(returning: requestStatus)
                 }
             }
@@ -33,11 +38,8 @@ class PhotosPermissionManager: Permission {
         switch status {
         case .authorized, .limited:
             return
-        case .denied, .restricted:
+        case .denied, .restricted, .notDetermined:
             throw StoreError.accessDenied("Access to photo library was denied.")
-        case .notDetermined:
-            /// This should not happen since in request we check if state is not determined and request acces if needed
-            return
         @unknown default:
             throw StoreError.accessDenied("Unexpected authorization status.")
         }

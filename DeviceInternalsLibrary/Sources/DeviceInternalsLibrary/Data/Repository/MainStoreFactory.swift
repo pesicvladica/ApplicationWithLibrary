@@ -27,17 +27,16 @@ final class MainStoreFactory: StoreFactory {
         
         switch internalType {
         case .contact:
-            let permissionManager = ContactPermissionManager()
             let contactStore = CNContactStore()
-            return DeviceContactStore(permissionManager: permissionManager,
-                                      contactStore: contactStore)
+            let permissionManager = ContactPermissionManager(contactStore: contactStore)
+            return DeviceContactStore(permissionManager: permissionManager, contactStore: contactStore)
         case .image, .video:
-            let mediaType = internalType == .image ?
-                                PHAssetMediaType.image :
-                                PHAssetMediaType.video
-            let permissionManager = PhotosPermissionManager()
+            let mediaType = internalType == .image ? PHAssetMediaType.image : PHAssetMediaType.video
+            
+            let permissionManager = PhotosPermissionManager(photoLibrary: PHPhotoLibrary.self)
             let phAsset = PHAsset.self
             let phAssetResource = PHAssetResource.self
+            
             return DeviceGalleryStore(mediaType: mediaType,
                                       permissionManager: permissionManager,
                                       phAsset: phAsset,
